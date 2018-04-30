@@ -1,19 +1,27 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import "./App.css";
+import Wrapper from "./components/Wrapper/Wrapper";
+import NavTabs from "./components/NavTabs/NavTabs";
+import About from "./components/pages/About/About";
+import Game from "./components/pages/Game/Game";
+import Help from "./components/pages/Help/Help";
+import Header from "./components/Header";
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Router>
+        <Wrapper>
+          <Header>
+            <NavTabs />
+          </Header>
+          <Route exact path='/' render={() => <Redirect to="/about" />} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/game" component={Game} />
+          <Route exact path="/help" component={Help} />
+        </Wrapper>
+      </Router>
     );
   }
 }
