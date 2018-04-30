@@ -3,6 +3,7 @@
   Game entities and rooms will be object-based
   - fresh game state
   - saved game states
+- Will main game computing be done in App.j
 
 # Objects
   - Started with some constructor modules
@@ -13,6 +14,7 @@
 - room builds
 - entity builds
   - action scripts
+- styling
 - User Authentication for save states
 - dev testing to track entities
 
