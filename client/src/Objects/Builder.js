@@ -6,7 +6,7 @@ var Item = require("./ItemConstructor.js");
 let cellPhone = new Item(
   "pack",  // location
   "cell phone",  // shortName
-  "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Uber ride.",  // longDesc
+  "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Rollr ride.",  // longDesc
   1,  // invSize
   false, // wear
   undefined  // value
