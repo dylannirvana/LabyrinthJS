@@ -1,4 +1,4 @@
-// Room Constructor
+// Item Constructor
 function Item(
   // arguments here
   location, shortName, longDesc, invSize, wear, value
@@ -14,9 +14,9 @@ function Item(
 
 }
 
-Item.prototype.wear
+// Item.prototype.wear
 
-module.exports = Room;
+module.exports = Item;
 
 // // In the constructor module
 

@@ -3,7 +3,8 @@
   Game entities and rooms will be object-based
   - fresh game state
   - saved game states
-- Will main game computing be done in App.j
+- Will main game computing be done in App.js?
+- State is not retained when moving to About or Help pages; should they be incorporated as modals into Game.js?
 
 # Objects
   - Started with some constructor modules
