@@ -5,6 +5,8 @@
   - saved game states
 - Will main game computing be done in App.js?
 - State is not retained when moving to About or Help pages; should they be incorporated as modals into Game.js?
+- Needs to incorporate turn-based timing for scripts
+  - perhaps a function firing after a command has been issued, after interactions have been handled, iterating over all active entities
 
 # Objects
   - Started with some constructor modules

@@ -1,0 +1,70 @@
+#gameArea {
+  background-color: #777;
+  overflow: auto;
+}
+
+#roomDesc {
+  background: #494;
+}
+
+#playerInfo {
+  font-size: 1rem;
+  background-color: rgb(191, 191, 255);
+}
+#playerInfo h2 {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#playArea {
+  background-color: rgb(138, 243, 138);
+}
+
+/* Tablet Portrait */
+@media screen and (min-width: 768px) {
+  
+}
+
+/* Tablet Landscape */
+@media screen and (min-width: 992px) {
+
+  #playerInfo h2 {
+    font-size: 2rem;
+    text-align: left;
+    padding: 15px;
+  }
+  
+  #gameArea {
+    height: 100%;
+  }
+  
+  #playArea {
+    height: 400px;
+    position: relative;
+    overflow: auto;
+
+  }
+  
+  #playArea .form-control {
+    position: absolute;
+    bottom: 0;
+    height: 2rem;
+  }
+  
+  #roomDesc {
+    height: 100%;
+  }
+  
+}
+
+
+
+/* Desktop */
+@media screen and (min-width: 1200px) {
+
+}
+
+/* Big Desktop */
+@media screen and (min-width: 1800px) {
+
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import "./Game.css";
-import { Button } from "react-bootstrap";
+import { Button, Col, Row, Grid } from "react-bootstrap";
 import { Input } from "../../Form";
 import Inventory from "../../Inventory";
 import Equipment from "../../Equipment";
@@ -18,6 +18,10 @@ class Game extends React.Component {
         health: 100
       },
       entities: []
+    },
+    player: {
+      inventory: [],
+      health: 100
     }
   };
 
@@ -85,24 +89,38 @@ class Game extends React.Component {
     return (
       <div>
         {this.state.inProgress ? (
-          <div id="gameArea">
-            <div id="playerInfo">
-              <Inventory />
-              <Equipment />
-              <Statistics />
-              <div>
-                {this.state.loggedIn ? (<Button onClick={() => this.handleSaveButton(this.state.login, this.state.game)}>Save Game</Button>) : (<p>Log In to Save</p>)}
-                <Button onClick={() => this.handleQuitGame()}>Quit Game</Button>
-              </div>
-            </div>
-            <RoomDesc />
-            <Input
-              value={this.state.userCommand}
-              onChange={this.handleInputChange}
-              name="userCommand"
-              placeholder=""
-            />
-          </div>
+          <Grid>
+            <Row className="show-grid" id="gameArea">
+              <Col xs={12} sm={3} id="playerInfo">
+                <Row>
+                  <Col xs={2} sm={12}>
+                    {this.state.login ? (<Button onClick={() => this.handleSaveButton(this.state.login, this.state.game)}>Save Game</Button>) : (<Button>Log In</Button>)}
+                  </Col>
+                  <Col xs={3} sm={12}>
+                    <Inventory inventory={this.state.player.inventory}/>
+                  </Col>
+                  <Col xs={3} sm={12}>
+                    <Equipment />
+                  </Col>
+                  <Col xs={2} sm={12}>
+                    <Statistics health={this.state.player.health}/>
+                  </Col>
+                  <Col xs={2} sm={12}>
+                    <Button onClick={() => this.handleQuitGame()}>Quit</Button>
+                  </Col>
+                </Row>
+              </Col>
+              <Col xs={12} sm={9} id="playArea">
+                <RoomDesc />
+                <Input
+                  value={this.state.userCommand}
+                  onChange={this.handleInputChange}
+                  name="userCommand"
+                  placeholder=""
+                />
+              </Col>
+            </Row>
+          </Grid>
         ) : (
           <div id="startScreen">
             <div className="buttonArea">
