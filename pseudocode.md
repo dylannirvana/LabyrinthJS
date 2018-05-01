@@ -4,9 +4,12 @@
   - fresh game state
   - saved game states
 - Will main game computing be done in App.js?
-- State is not retained when moving to About or Help pages; should they be incorporated as modals into Game.js?
+- Incorporated separate pages into single-page app so state is retained
+  - "cannot update during an existing state transition"
+  - bind method?
 - Needs to incorporate turn-based timing for scripts
   - perhaps a function firing after a command has been issued, after interactions have been handled, iterating over all active entities
+- How to place buttons that affect state
 
 # Objects
   - Started with some constructor modules
@@ -32,4 +35,5 @@
 
 # Gameplay timeline
 - introduction text
+- game start
 

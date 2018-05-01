@@ -132,8 +132,8 @@ class App extends Component {
       return (
         <div id="startScreen">
           <div className="buttonArea">
-            <Button onClick={() => this.handleNewGame.bind()}>Start New Game</Button>
-            {this.startButtons.bind()}  
+            <Button onClick={() => this.handleNewGame()}>Start New Game</Button>
+            {this.startButtons()}  
           </div>
         </div>
       )
