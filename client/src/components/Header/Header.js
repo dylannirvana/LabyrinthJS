@@ -6,7 +6,7 @@ const centeredStyle = {
 }
 const Header = props => (
   <div id="header">
-    <h1>Labyrinth.js</h1>
+    <h1 style={centeredStyle}>Labyrinth.js</h1>
     {props.children}
   </div>
 );

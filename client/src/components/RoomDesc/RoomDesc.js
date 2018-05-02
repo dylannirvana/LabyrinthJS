@@ -3,7 +3,9 @@ import "./RoomDesc.css";
 
 const RoomDesc = props => (
   <div id="roomDesc">
-    <h2>Room Description</h2>
+    {props.text.map((obj, i) => (
+      <p key={i}>{obj}</p>
+    ))}
   </div>
 );
 

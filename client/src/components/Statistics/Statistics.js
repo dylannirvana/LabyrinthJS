@@ -24,7 +24,9 @@ function showHealth(health) {
 const Statistics = props => (
   <div id="statistics">
     <h2>Statistics</h2>
-    <p>Health: {showHealth(props.health)}</p>
+    <p>Health: {showHealth(props.stats.health)}</p>
+    <p>Attack: {props.stats.attack}</p>
+    <p>Defense: {props.stats.defense}</p>
   </div>
 );
 

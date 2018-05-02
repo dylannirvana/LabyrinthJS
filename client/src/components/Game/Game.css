@@ -1,0 +1,138 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  height: 100%;
+}
+
+h1 {
+  font-size: 3rem;
+  text-align: center;
+}
+
+#gameArea {
+  background-color: #777;
+  overflow: auto;
+  /* max-height: 40rem; */
+}
+
+.userCommandLine {
+  display: block;
+  bottom: 0px;
+  height: 2rem;
+  width: 100%;
+}
+
+#command {
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+}
+
+.form-group p {
+  display: inline-block;
+}
+
+.userCommandLine label {
+  display: inline;
+}
+
+#roomDesc {
+  background: #494;
+}
+
+#playerInfo {
+  font-size: 1rem;
+  background-color: rgb(191, 191, 255);
+}
+
+#playerInfo h2 {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#playArea {
+  background-color: rgb(138, 243, 138);
+  min-height: 100%;
+  position: relative;
+  overflow: auto;
+  margin-bottom: 2rem;
+}
+  
+#playArea p {
+  margin: 0;
+}
+
+/* Tablet Portrait */
+@media screen and (min-width: 768px) {
+  
+  #playerInfo {
+    padding: 0;
+  }
+
+  #playerInfo h2 {
+    font-size: 2rem;
+    text-align: left;
+    padding: 0;
+  }
+
+  #playerInfo button {
+    width: 100%;
+  }
+
+  #playerInfo .row {
+    margin: 0;
+  }
+  
+  #gameArea {
+    min-height: 100% !important;
+  }
+
+  #gameArea .container {
+    margin: 0 auto;
+  }
+
+  .titleColumn {
+    height: 3vh;
+  }
+
+  .topButtons {
+    height: 2vh;
+    padding: 0;
+  }
+
+  .invColumn {
+    max-height: 30vh;
+    overflow: auto;
+  }
+
+  .equipColumn {
+    max-height: 30vh;
+    overflow: auto;
+  }
+  
+  .statColumn {
+    max-height: 30vh;
+    overflow: auto;
+  }
+
+  .bottomButtons {
+    padding: 0;
+  }
+  
+}
+
+/* Tablet Landscape */
+@media screen and (min-width: 992px) {
+
+}
+
+/* Desktop */
+@media screen and (min-width: 1200px) {
+
+}
+
+/* Big Desktop */
+@media screen and (min-width: 1800px) {
+
+}
