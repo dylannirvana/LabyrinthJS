@@ -1,6 +1,7 @@
 import React from "react";
 import "./Game.css";
-import { Col, Row, Grid } from "react-bootstrap";
+// import { Col, Row, Grid, Clearfix } from "react-bootstrap";
+import { Col, Row, Container } from "reactstrap";
 import Title from "../Title";
 import Inventory from "../Inventory";
 import Equipment from "../Equipment";
@@ -8,90 +9,35 @@ import Statistics from "../Statistics";
 import RoomDesc from "../RoomDesc";
 
 const Game = props => (
-  <div id="gameArea">
-    <Grid>
-      {props.isMobile ? (
-        <Row className="show-grid">
-          <Col xs={12} id="playArea">
-            <RoomDesc text={props.textBuffer} />
-            {props.children}
-          </Col>
-          <Col xs={12} id="playerInfo">
-            <Row>
-              <Col xs={2} className="titleColumn">
-                <Title>Labyrinth.js</Title>
-              </Col> 
-                <Row className="topButtons">
-                  <Col xs={6}>
-                    <button onClick={props.handleHelpButton}>Help</button>
-                  </Col> 
-                  <Col xs={6}>
-                    {props.login ? (<button onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
-                  </Col> 
-                </Row>
-              <Col xs={3} className="invColumn">
-                <Inventory inventory={props.player.inventory}/>
-              </Col>
-              <Col xs={3} className="equipColumn">
-                <Equipment equipment={props.player.equipment}/>
-              </Col>
-              <Col xs={2} className="statsColumn">
-                <Statistics stats={props.player.stats}/>
-              </Col>
-              <Row className="bottomButtons">
-                <Col xs={2}>
-                  <button onClick={props.handleAboutButton}>About</button>
-                </Col>
-                <Col xs={2}>
-                  <button onClick={props.handleQuitButton}>Quit</button>
-                </Col>
-              </Row>
-            </Row>
-          </Col>
-        </Row>
-      ) : (
-        <Row className="show-grid">
-          <Col sm={3} id="playerInfo">
-            <Row>
-              <Col sm={12} className="titleColumn">
-                <Title>Labyrinth.js</Title>
-              </Col> 
-                <Row className="topButtons">
-                  <Col sm={6}>
-                    <button onClick={props.handleHelpButton}>Help</button>
-                  </Col> 
-                  <Col sm={6}>
-                    {props.login ? (<button onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
-                  </Col> 
-                </Row>
-              <Col sm={12} className="invColumn">
-                <Inventory inventory={props.player.inventory}/>
-              </Col>
-              <Col sm={12} className="equipColumn">
-                <Equipment equipment={props.player.equipment}/>
-              </Col>
-              <Col sm={12} className="statsColumn">
-                <Statistics stats={props.player.stats}/>
-              </Col>
-              <Row className="bottomButtons">
-                <Col sm={6}>
-                  <button onClick={props.handleAboutButton}>About</button>
-                </Col>
-                <Col sm={6}>
-                  <button onClick={props.handleQuitButton}>Quit</button>
-                </Col>
-              </Row>
-            </Row>
-          </Col>
-          <Col sm={9} id="playArea">
-            <RoomDesc text={props.textBuffer} />
-            {props.children}
-          </Col>
-        </Row>
-      )}
-
-    </Grid>
-  </div>
+  <Container >
+    <Row className="no-gutters">
+      <Col xs={12} md={9}>
+        <Title>Labyrinth.js</Title>
+      </Col>
+      <Col xs={6} md={3} className="buttonArea">
+        {props.login ? (<button onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
+        <button onClick={props.viewHelpToggle}>Help</button>
+      </Col>
+      <Col xs={6} md={3} className="buttonArea">
+        <button onClick={props.viewAboutToggle} >About</button>
+        <button onClick={props.handleQuitButton}>Quit</button>
+      </Col>
+      <Col xs={12} md={9}>
+        <RoomDesc text={props.textBuffer} />
+      </Col>
+      <Col xs={12} md={9}>
+        {props.children}
+      </Col>
+      <Col xs={12} className="d-block d-md-none">
+        <button className="viewCharacterButton" onClick={props.viewCharacterToggle}>Check Yourself</button>
+      </Col>
+      <Col md={3} className="d-none d-md-block" >
+        <Inventory inventory={props.player.inventory}/>
+        <Equipment equipment={props.player.equipment}/>
+        <Statistics stats={props.player.stats}/>
+      </Col>
+    </Row>
+  </Container >
 );
 
 export default Game;

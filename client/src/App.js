@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
 import Wrapper from "./components/Wrapper/Wrapper";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import About from "./components/About";
 import Help from "./components/Help";
 import Header from "./components/Header";
 import room from "./Objects/WorldBuilder";
 import Game from "./components/Game";
+import Inventory from "./components/Inventory";
+import Equipment from "./components/Equipment";
+import Statistics from "./components/Statistics";
 import { Input } from "./components/Form";
-
 
 const echo = (textBuffer, content, userCommand) => {
   let arr = textBuffer;
@@ -20,17 +23,22 @@ const echo = (textBuffer, content, userCommand) => {
 };
 
 const updateScroll = () => {
-  console.log("updateScroll firing");
   var element = document.getElementById("roomDesc");
   element.scrollTop = element.scrollHeight;
 };
 
+let isMobile = window.innerWidth < 768 ? true : false;
+
 class App extends Component {
+
   state = {
     userCommand: "",
     inProgress: true,
     login: false,
-    activePage: "game",
+    viewCharacter: false,
+    viewAbout: false,
+    viewHelp: false,
+    isMobile: isMobile,
     player: {
       location: room[0],
       equipment: {
@@ -84,43 +92,18 @@ class App extends Component {
 
   handleLogoutButton = data => {
     console.log("Logout button firing");
-
   }
 
-  handleAboutButton = () => {
-    console.log("About button firing");
-    this.setState({lastPage: this.state.activePage});
-    this.setState({activePage: "about"})
-  }
-  
-  showAbout() {
-    return (
-      <div id="about">
-        <button onClick={this.setState({activePage: this.state.lastPage})}>x</button>
-        <Header>
-          <button onClick={() => this.handleHelpButton()}>Help</button> <button onClick={() => this.handleAboutButton()}>About</button>  
-        </Header>
-        <About />
-      </div>
-    )
+  viewCharacterToggle = () => {
+    this.setState({viewCharacter: !this.state.viewCharacter});
   }
 
-  handleHelpButton = () => {
-    console.log("Help button firing");
-    this.setState({lastPage: this.state.activePage});
-    this.setState({activePage: "help"})
+  viewAboutToggle = () => {
+    this.setState({viewAbout: !this.state.viewAbout});
   }
-  
-  showHelp() {
-    return (
-      <div id="help">
-        <button onClick={this.setState({activePage: this.state.lastPage})}>x</button>
-        <Header>
-          <button onClick={() => this.handleHelpButton()}>Help</button> <button onClick={() => this.handleAboutButton()}>About</button>  
-        </Header>
-        <Help />
-      </div>
-    )
+
+  viewHelpToggle = () => {
+    this.setState({viewHelp: !this.state.viewHelp});
   }
   
   handleQuitButton = () => {
@@ -154,12 +137,12 @@ class App extends Component {
 
   handleUserCommand = event => {
     event.preventDefault();
-    console.log("handleUserCommand fired");
     if (this.state.userCommand) {
       this.setState({
         textBuffer: echo(this.state.textBuffer, [this.state.userCommand], true),
-         userCommand: ""
+        userCommand: ""
       });
+      updateScroll();
     }
     // updateScroll();
   };
@@ -182,14 +165,14 @@ class App extends Component {
           entities={this.state.entities} 
           textBuffer={this.state.textBuffer} 
           login={this.state.login} 
-          handleHelpButton={this.handleHelpButton} 
+          viewAboutToggle={this.viewAboutToggle.bind(this)}
+          viewHelpToggle={this.viewHelpToggle.bind(this)}
+          viewCharacterToggle={this.viewCharacterToggle.bind(this)}
           handleQuitButton={this.handleQuitButton} 
           handleSaveButton={this.handleSaveButton} 
-          handleAboutButton={this.handleAboutButton} 
           handleLoginButton={this.handleLoginButton}>
           <form className="userCommandLine">
             <div className="form-group">
-              > 
               <Input
                 value={this.state.userCommand}
                 onChange={this.handleInputChange}
@@ -197,9 +180,9 @@ class App extends Component {
                 placeholder=""
                 type="text"
                 id="command"
-                onClick={this.handleUserCommand} 
+                onClick={(e) => {this.handleUserCommand(e)}} 
               />
-              <button type="submit" onClick={this.handleUserCommand} className="btn btn-success hidden">Submit</button>
+              <button type="submit" onClick={(e) => {this.handleUserCommand(e)}} className="btn btn-success d-none">Submit</button>
             </div>
           </form>
         </Game>
@@ -219,7 +202,22 @@ class App extends Component {
   render() {
     return (
       <Wrapper>
-        {this.state.activePage ===  "game" ? (this.showGame()) : this.state.activePage === "help" ? (this.showHelp()) : (this.showAbout())}
+        <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
+          <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
+          <ModalBody>
+            <Statistics stats={this.state.player.stats}/>
+            <Equipment equipment={this.state.player.equipment}/>
+            <Inventory inventory={this.state.player.inventory}/>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={this.viewCharacterToggle}>Close</Button>
+          </ModalFooter>
+        </Modal>
+        <About 
+          viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />
+        <Help 
+          viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
+        {this.showGame()}
       </Wrapper>
     )
   };
