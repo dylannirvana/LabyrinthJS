@@ -209,9 +209,6 @@ class App extends Component {
             <Equipment equipment={this.state.player.equipment}/>
             <Inventory inventory={this.state.player.inventory}/>
           </ModalBody>
-          <ModalFooter>
-            <Button onClick={this.viewCharacterToggle}>Close</Button>
-          </ModalFooter>
         </Modal>
         <About 
           viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />

@@ -8,9 +8,6 @@ const Help = (props) => (
     <ModalBody>
       <p>Provide instructions here.</p>
     </ModalBody>
-    <ModalFooter>
-      <Button onClick={props.viewHelpToggle}>Close</Button>
-    </ModalFooter>
   </Modal>
 );
 

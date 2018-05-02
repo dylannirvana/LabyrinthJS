@@ -8,9 +8,6 @@ const About = (props) => (
     <ModalBody>
       <p>Talk about this here.</p>
     </ModalBody>
-    <ModalFooter>
-      <Button onClick={props.viewAboutToggle}>Close</Button>
-    </ModalFooter>
   </Modal>
 );
 
