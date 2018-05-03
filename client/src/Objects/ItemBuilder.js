@@ -1,8 +1,7 @@
-const Room = require("./RoomConstructor.js");
 const Item = require("./ItemConstructor.js");
 
 
-const room = [];
+const item = [];
 
 // Items
 
@@ -15,40 +14,9 @@ let cellPhone = new Item(
   undefined  // value
 );
 
-// Rooms
 
-let room0 = new Room(
-  0,  // location
-  "This is Room 0.",  // desc
-  [cellPhone],  // [items]
-  [],  // [entities]
-  [  //exits
-    {
-      north: 2,
-      minPass: true
-    }
-  ]
-);
-room.push(room0);
 
-let room1 = new Room(
-  1,  // location
-  "This is Room 1.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  [  // [exits]
-    {
-      north: 10,
-    },
-    {
-      west: 2,
-      minPass: true
-    }
-  ]
-);
-room.push(room1);
-
-module.exports = room;
+module.exports = item;
 
 
 // // In this module:

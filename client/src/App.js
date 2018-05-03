@@ -4,14 +4,15 @@ import Wrapper from "./components/Wrapper/Wrapper";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import About from "./components/About";
 import Help from "./components/Help";
-import room from "./Objects/WorldBuilder";
+import room from "./Objects/RoomBuilder";
+import item from "./Objects/ItemBuilder";
 import Game from "./components/Game";
 import Inventory from "./components/Inventory";
 import Equipment from "./components/Equipment";
 import Statistics from "./components/Statistics";
 import { Input } from "./components/Form";
 
-const echo = (textBuffer, content, userCommand) => {
+const echo = (content, textBuffer, userCommand) => {
   let arr = textBuffer;
   content.forEach(ele => {
     if (userCommand) ele="> "+ele;
@@ -19,6 +20,15 @@ const echo = (textBuffer, content, userCommand) => {
     arr.push(ele);       
   });
   return arr;
+};
+
+// parse command
+const parseCommand = (command) => {
+
+};
+
+const newTurn = (location) => {
+
 };
 
 const updateScroll = () => {
@@ -52,6 +62,9 @@ class App extends Component {
         health: 100,
         attack: 0,
         defense: 3
+      },
+      options: {
+        verbose: true,
       }
     },
     entities: [],
@@ -136,11 +149,17 @@ class App extends Component {
 
   handleUserCommand = event => {
     event.preventDefault();
+    // check for non-empty command input
     if (this.state.userCommand) {
+      let thisCommand = this.state.userCommand;
+      // echo command
       this.setState({
-        textBuffer: echo(this.state.textBuffer, [this.state.userCommand], true),
+        textBuffer: echo([this.state.userCommand], this.state.textBuffer, true),
         userCommand: ""
       });
+      // start command processing and turn action here
+      parseCommand(thisCommand);
+      // assure roomDesc window is scrolled to bottom
       updateScroll();
     }
     // updateScroll();

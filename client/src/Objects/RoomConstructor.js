@@ -1,15 +1,28 @@
 // Room Constructor
 function Room(
   // arguments here
-  location, desc, items, entities, exits, 
-
-) {
+  location, name, desc, items, entities, N, NE, E, SE, S, SW, W, NW, UP, DOWN, IN, OUT, script, features
+  ) {
   // properties here
   this.location = location;
+  this.name = name;
   this.desc = desc;
   this.items = items;
   this.entities = entities;
-  this.exits = exits;
+  this.n = N;
+  this.ne = NE;
+  this.e = E;
+  this.se = SE;
+  this.s = S;
+  this.sw = SW;
+  this.w = W;
+  this.nw = NW;
+  this.up = UP;
+  this.down = DOWN;
+  this.in = IN;
+  this.out = OUT;
+  this.script = script;
+  this.features = features;
 }
 
 module.exports = Room;
