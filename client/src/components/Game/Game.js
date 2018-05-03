@@ -15,12 +15,12 @@ const Game = props => (
         <Title>Labyrinth.js</Title>
       </Col>
       <Col xs={6} md={{size: 3, order: 1}} className="buttonArea">
-        {props.login ? (<button  class="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button  class="gameButton smButton" onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
-        <button class="gameButton smButton" onClick={props.viewHelpToggle}>Help</button>
+        {props.login ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button  className="gameButton smButton" onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
+        <button className="gameButton smButton" onClick={props.viewHelpToggle}>Help</button>
       </Col>
       <Col xs={6} md={{size: 3, order: 5}} className="buttonArea">
-        <button class="gameButton smButton" onClick={props.viewAboutToggle} >About</button>
-        <button class="gameButton smButton" onClick={props.handleQuitButton}>Quit</button>
+        <button className="gameButton smButton" onClick={props.viewAboutToggle} >About</button>
+        <button className="gameButton smButton" onClick={props.handleQuitButton}>Quit</button>
       </Col>
       <Col xs={12} md={{size: 9, order: 4}}>
         <RoomDesc text={props.textBuffer} />
@@ -29,9 +29,9 @@ const Game = props => (
         {props.children}
       </Col>
       <Col xs={12} className="d-block d-md-none">
-        <button class="gameButton viewCharacterButton" onClick={props.viewCharacterToggle}>Check Yourself</button>
+        <button className="gameButton viewCharacterButton" onClick={props.viewCharacterToggle}>Check Yourself</button>
       </Col>
-      <Col md={{size: 3, order: 3}} className="d-none d-md-block" >
+      <Col md={{size: 3, order: 3}} className="d-none d-md-block" id="playerArea">
         <Inventory inventory={props.player.inventory}/>
         <Equipment equipment={props.player.equipment}/>
         <Statistics stats={props.player.stats}/>

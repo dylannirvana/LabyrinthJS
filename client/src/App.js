@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import "./App.css";
 import Wrapper from "./components/Wrapper/Wrapper";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import About from "./components/About";
 import Help from "./components/Help";
-import Header from "./components/Header";
 import room from "./Objects/WorldBuilder";
 import Game from "./components/Game";
 import Inventory from "./components/Inventory";
@@ -173,11 +172,11 @@ class App extends Component {
           handleLoginButton={this.handleLoginButton}>
           <form className="userCommandLine">
             <div className="form-group">
+              <label>>&nbsp;</label>
               <Input
                 value={this.state.userCommand}
                 onChange={this.handleInputChange}
                 name="userCommand"
-                placeholder=""
                 type="text"
                 id="command"
                 onClick={(e) => {this.handleUserCommand(e)}} 

@@ -1,6 +1,6 @@
 import React from "react";
 import "./Help.css";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 const Help = (props) => (
   <Modal isOpen={props.viewHelp} toggle={props.viewHelpToggle} className="helpModal">
