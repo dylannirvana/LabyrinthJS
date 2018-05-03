@@ -1,16 +1,15 @@
 // Item Constructor
 function Item(
   // arguments here
-  location, shortName, longDesc, invSize, wear, value
+  itemId, shortName, longDesc, invSize, wear, value
   ) {
   // properties here
-  this.location = location;
+  this.itemId = itemId;
   this.shortName = shortName;
   this.longDesc = longDesc;
   this.invSize = invSize;
   this.wear = wear;
   this.value = value;
-  
 
 }
 

@@ -7,7 +7,7 @@ const room = [];
 // Items
 
 let cellPhone = new Item(
-  "pack",  // location
+  0,  // itemId
   "cell phone",  // shortName
   "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Uber ride.",  // longDesc
   1,  // invSize
