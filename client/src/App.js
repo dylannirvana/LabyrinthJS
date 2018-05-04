@@ -257,61 +257,63 @@ class App extends Component {
     }
   }
 
+  // render() {
+  //   return (
+  //     <Wrapper>
+  //       <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
+  //         <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
+  //         <ModalBody>
+  //           <Statistics stats={this.state.player.stats}/>
+  //           <Equipment equipment={this.state.player.equipment}/>
+  //           <Inventory inventory={this.state.player.inventory}/>
+  //         </ModalBody>
+  //       </Modal>
+  //       <About 
+  //         viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />
+  //       <Help 
+  //         viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
+  //       {this.showGame()}
+  //     </Wrapper>
+  //   )
+  // };
+
+  // integrate this
   render() {
     return (
-      <Wrapper>
-        <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
-          <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
-          <ModalBody>
-            <Statistics stats={this.state.player.stats}/>
-            <Equipment equipment={this.state.player.equipment}/>
-            <Inventory inventory={this.state.player.inventory}/>
-          </ModalBody>
-        </Modal>
-        <About 
-          viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />
-        <Help 
-          viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
-        {this.showGame()}
-      </Wrapper>
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <Router>
+          <div>
+            <div className="top-bar">
+              <div className="top-bar-left">
+                <Link to="/">React App</Link>
+              </div>
+              {this.state.authenticated ? (
+                <div className="top-bar-right">
+                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/logout">Log out</Link>
+                </div>
+              ) : (
+                <div className="top-bar-right">
+                  <Link to="/login">Log in</Link>
+                  <Link to="/signup">Sign up</Link>
+                </div>
+              )}
+  
+            </div>
+  
+            <PropsRoute exact path="/" component={HomePage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+            <PrivateRoute path="/dashboard" component={DashboardPage}/>
+            <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+            <LoggedOutRoute path="/signup" component={SignUpPage}/>
+            <Route path="/logout" component={LogoutFunction}/>
+          </div>
+  
+        </Router>
+      </MuiThemeProvider>
     )
-  };
+  }
+
 }
 
-// integrate this
-// render() {
-//   return (
-//     <MuiThemeProvider muiTheme={getMuiTheme()}>
-//       <Router>
-//         <div>
-//           <div className="top-bar">
-//             <div className="top-bar-left">
-//               <Link to="/">React App</Link>
-//             </div>
-//             {this.state.authenticated ? (
-//               <div className="top-bar-right">
-//                 <Link to="/dashboard">Dashboard</Link>
-//                 <Link to="/logout">Log out</Link>
-//               </div>
-//             ) : (
-//               <div className="top-bar-right">
-//                 <Link to="/login">Log in</Link>
-//                 <Link to="/signup">Sign up</Link>
-//               </div>
-//             )}
-
-//           </div>
-
-//           <PropsRoute exact path="/" component={HomePage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
-//           <PrivateRoute path="/dashboard" component={DashboardPage}/>
-//           <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
-//           <LoggedOutRoute path="/signup" component={SignUpPage}/>
-//           <Route path="/logout" component={LogoutFunction}/>
-//         </div>
-
-//       </Router>
-//     </MuiThemeProvider>
-//   )
-// }
 
 export default App;

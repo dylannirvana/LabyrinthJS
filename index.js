@@ -3,12 +3,10 @@ const path = require("path");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const bodyParser = require("body-parser");
-const routes = require("./routes")
+// const routes = require("./routes")
 const passport = require("passport");
 const config = require("./server/config");
 const logger = require("morgan");
-
-const app = express();
 
 // connect to the database and load models
 // uses environmental variable for deployment (Heroku) or defaults to local config
@@ -40,15 +38,11 @@ app.use('/api', authCheckMiddleware);
 // Serve up static assets
 app.use(express.static("client.build"));
 
-// Add routes, both API and view
-app.use(routes);
-    // HOW TO MODIFY REACT-PASSPORT-EXAMPLE
-    // const authRoutes = require('./server/routes/auth');
-    // const apiRoutes = require('./server/routes/api');
-    // app.use('/auth', authRoutes);
-    // app.use('/api', apiRoutes);
-
-// Connect to the Mongo DB
+// add routes
+const authRoutes = require('./server/routes/auth');
+const apiRoutes = require('./server/routes/api');
+app.use('/auth', authRoutes);
+app.use('/api', apiRoutes);
 
 // Send every request to the React app
 // Define any API routes before this runs
