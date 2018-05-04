@@ -1,0 +1,4 @@
+{
+  "dbUri": "mongodb://localhost/labyrinthjs",
+  "jwtSecret": "it's dangerous to go alone"
+}
