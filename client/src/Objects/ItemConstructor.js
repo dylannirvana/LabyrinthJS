@@ -1,15 +1,19 @@
 // Item Constructor
+
 function Item(
   // arguments here
-  itemId, shortName, longDesc, invSize, wear, value
+  itemId, variableName, shortName, longDesc, keywords, invSize, wear, value, thrown
   ) {
   // properties here
-  this.itemId = itemId;
-  this.shortName = shortName;
-  this.longDesc = longDesc;
-  this.invSize = invSize;
-  this.wear = wear;
-  this.value = value;
+  this.itemId = itemId; // itemId
+  this.variableName = variableName;
+  this.shortName = shortName; // short name
+  this.longDesc = longDesc; // long description
+  this.keywords = keywords; // synonyms and keywords
+  this.invSize = invSize;  // undefined = not takeable
+  this.wear = wear; // location as string
+  this.value = value; // attack or defense power
+  this.thrown = thrown; // undefined = unthrowable
 
 }
 

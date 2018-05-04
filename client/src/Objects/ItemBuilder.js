@@ -3,17 +3,27 @@ const Item = require("./ItemConstructor.js");
 
 const item = [];
 
+const throwThis = (shortName) => {  
+  return {
+    actionMessage: "You hurl the "+shortName+" with all your might. It makes a satisfying crunch, but has little other effect.",
+    disappears: false
+  }
+}
 // Items
 
-let cellPhone = new Item(
+let cellphone = new Item(
   0,  // itemId
+
   "cell phone",  // shortName
+  "cellPhone", // variableName
   "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Uber ride.",  // longDesc
+  ["cell", "phone", "noxia", "grunt"], // keywords
   1,  // invSize
   false, // wear
-  undefined  // value
+  undefined,  // value
+  "You hurl your cell phone across the room. It makes a satisfying crunch, but fails to do anything else." // thrown
 );
-
+item.push(cellphone);
 
 
 module.exports = item;
