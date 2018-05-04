@@ -1,5 +1,33 @@
 import React, { Component } from "react";
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
+// theme modules
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import "./App.css";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+
+// remove after integration
+import HomePage from './components/HomePage.jsx';
+
+import { 
+  PrivateRoute, 
+  PropsRoute, 
+  LoggedOutRoute 
+} from './components/Routes';
+
+// user auth components
+import LoginPage from './pages/LoginPage.jsx';
+import LogoutFunction from './pages/LogoutFunction.jsx';
+import SignUpPage from './pages/SignUpPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
+
+import Auth from './utils/Auth';
+
 import Wrapper from "./components/Wrapper/Wrapper";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import About from "./components/About";
@@ -41,13 +69,18 @@ const updateScroll = () => {
   element.scrollTop = element.scrollHeight;
 };
 
+// currently unused utility variable, referenced in state and componentDidMount()
 let isMobile = window.innerWidth < 768 ? true : false;
+
+// remove tap delay, essential for MaterialUI to work properly
+injectTapEventPlugin();
 
 class App extends Component {
 
   state = {
     userCommand: "",
     inProgress: true,
+    authenticated: false,
     login: false,
     viewCharacter: false,
     viewAbout: false,
@@ -322,6 +355,44 @@ class App extends Component {
 
   }
 
+  handleInputChange = event => {
+    this.setState({ userCommand: event.target.value });
+  };
+
+  handleUserCommand = event => {
+    event.preventDefault();
+    // check for non-empty command input
+    if (this.state.userCommand) {
+      let thisCommand = this.state.userCommand;
+      // echo command
+      this.setState({
+        textBuffer: echo([this.state.userCommand], this.state.textBuffer, true),
+        userCommand: ""
+      });
+      // start command processing and turn action here
+      parseCommand(thisCommand);
+      // assure roomDesc window is scrolled to bottom
+      updateScroll();
+    }
+    // updateScroll();
+  };
+
+  toggleAuthenticateStatus = () => {
+    // check authenticated status and toggle state based on that
+    this.setState({ authenticated: Auth.isUserAuthenticated() })
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', () => {
+      this.setState({
+          isMobile: window.innerWidth < 768
+      });
+    }, false);
+    // check if user is logged in on refresh
+    this.toggleAuthenticateStatus()
+    this.loadCurrentState();
+  }
+
   showGame() {
     if (this.state.inProgress === true) {
       return (
@@ -384,6 +455,44 @@ class App extends Component {
       </Wrapper>
     )
   };
+
+  // integrate this
+  // render() {
+  //   return (
+  //     <MuiThemeProvider muiTheme={getMuiTheme()}>
+  //       <Router>
+  //         <div>
+  //           <div className="top-bar">
+  //             <div className="top-bar-left">
+  //               <Link to="/">React App</Link>
+  //             </div>
+  //             {this.state.authenticated ? (
+  //               <div className="top-bar-right">
+  //                 <Link to="/dashboard">Dashboard</Link>
+  //                 <Link to="/logout">Log out</Link>
+  //               </div>
+  //             ) : (
+  //               <div className="top-bar-right">
+  //                 <Link to="/login">Log in</Link>
+  //                 <Link to="/signup">Sign up</Link>
+  //               </div>
+  //             )}
+  
+  //           </div>
+  
+  //           <PropsRoute exact path="/" component={HomePage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+  //           <PrivateRoute path="/dashboard" component={DashboardPage}/>
+  //           <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+  //           <LoggedOutRoute path="/signup" component={SignUpPage}/>
+  //           <Route path="/logout" component={LogoutFunction}/>
+  //         </div>
+  
+  //       </Router>
+  //     </MuiThemeProvider>
+  //   )
+  // }
+
 }
+
 
 export default App;
