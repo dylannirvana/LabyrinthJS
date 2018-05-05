@@ -15,7 +15,7 @@ const Game = props => (
         <Title>Labyrinth.js</Title>
       </Col>
       <Col xs={6} md={{size: 3, order: 1}} className="buttonArea">
-        {props.login ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button  className="gameButton smButton" onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
+        {props.authenticated ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button className="gameButton smButton" onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
         <button className="gameButton smButton" onClick={props.viewHelpToggle}>Help</button>
       </Col>
       <Col xs={6} md={{size: 3, order: 5}} className="buttonArea">

@@ -40,16 +40,6 @@ import Equipment from "./components/Equipment";
 import Statistics from "./components/Statistics";
 import { Input } from "./components/Form";
 
-const echo = (relay, textBuffer, userCommand) => {
-  let arr = textBuffer;
-  relay.forEach(ele => {
-    if (userCommand) ele="> "+ele;
-    if (arr.length > 100) arr.splice(0, 1);
-    arr.push(ele);       
-  });
-  return arr;
-};
-
 const moveWords = [
   "n", "ne", "e", "se", "s", "sw", "w", "nw", "north", "east", "south", "west", "northeast", "southeast", "southwest", "northwest", "go", "walk", "run", "enter", "in", "up", "u", "d", "down", "leave"
 ];
@@ -116,60 +106,32 @@ class App extends Component {
       if (arr.length > 100) arr.splice(0, 1);
       arr.push(ele);       
     });
-    this.setState({textBuffer: arr});
+    this.setState({textBuffer: arr, userCommand: ""});
+    updateScroll();
   };
 
-  startNewGame() {
-    this.describeRoom(this.state.player.location);
-  }
+  // *
+  // * HANDLE PLAYER COMMAND INPUT
+  // *
 
-  componentDidMount() {
-    this.startNewGame();
-  }
+  handleInputChange = event => {
+    this.setState({ userCommand: event.target.value });
+  };
 
-  describeRoom(currLoc) {
-    console.log("@loadCurrentState current room = ", currLoc);
-    let relay = [];
-    relay.push(room[currLoc].name);
-    relay.push(room[currLoc].desc);
-    // let items = [];
-    // if (room[currLoc].items.length !== 0) {
-    //   room[currLoc].items.forEach(ele => {
-    //     items.push(ele.shortName);
-    //   })
-    //   relay.push("You see ")
-    let exits =[];
-    if (room[currLoc].n.to && room[currLoc].n.visible) exits.push("north");
-    if (room[currLoc].ne.to && room[currLoc].ne.visible) exits.push("northeast");
-    if (room[currLoc].e.to && room[currLoc].e.visible) exits.push("east");
-    if (room[currLoc].se.to && room[currLoc].se.visible) exits.push("southeast");
-    if (room[currLoc].s.to && room[currLoc].s.visible) exits.push("south");
-    if (room[currLoc].sw.to && room[currLoc].sw.visible) exits.push("southwest");
-    if (room[currLoc].w.to && room[currLoc].w.visible) exits.push("west");
-    if (room[currLoc].nw.to && room[currLoc].nw.visible) exits.push("northwest");
-    if (room[currLoc].up.to && room[currLoc].up.visible) exits.push("up");
-    if (room[currLoc].down.to && room[currLoc].down.visible) exits.push("down");
-    if (room[currLoc].in.to && room[currLoc].in.visible) exits.push("in");
-    if (room[currLoc].out.to && room[currLoc].out.visible) exits.push("out");
-    relay.push("Exits: "+exits.join(", "));
-    echo(relay, this.state.textBuffer);
-  }
+  handleUserCommand = this.handleUserCommand.bind(this);
 
-  handleUserCommand = event => {
+  async handleUserCommand(event) {
     event.preventDefault();
     // check for non-empty command input
     if (this.state.userCommand) {
       let thisCommand = this.state.userCommand;
       // echo command
-      this.setState({
-        textBuffer: echo([this.state.userCommand], this.state.textBuffer, true),
-        userCommand: ""
-      });
+      await this.echo([this.state.userCommand], this.state.textBuffer, true)
       // start command processing and turn action here
       this.parseCommand(thisCommand);
       // assure roomDesc window is scrolled to bottom
+      updateScroll();
     }
-    // updateScroll();
   };
 
   // parse command
@@ -184,7 +146,7 @@ class App extends Component {
       if (commandWords[0] === "l" || commandWords[0] === "look") {
         this.describeRoom(this.state.player.location);
       } else {
-        echo(["Unknown command. - in parseCommand()"], this.state.textBuffer) 
+        this.echo(["Unknown command. - in parseCommand()"], this.state.textBuffer) 
       }
     };
     // look command
@@ -195,7 +157,7 @@ class App extends Component {
   };
 
   // actions
-  async movePlayer(words) {
+  movePlayer(words) {
     let currLoc = this.state.player.location;
     let newLoc;
     let nope = "You can't go that way.";
@@ -269,37 +231,44 @@ class App extends Component {
         break;
       default : newLoc = "Movement not defined. - at movePlayer(), words[0] = "+words[0]
     }
-    if (typeof newLoc !== "number") { echo([newLoc], this.state.textBuffer) } else {
-      await this.setState(prevState => ({
+    if (typeof newLoc !== "number") { this.echo([newLoc], this.state.textBuffer) } else {
+      this.setState(prevState => ({
         player: {
            ...prevState.player,
            location: newLoc
         }
       }))
+      this.describeRoom(this.state.player.location);
     }
     console.log("@parseCommand current room = ", this.state.player.location);
-
-    this.describeRoom(this.state.player.location);
-    updateScroll();
   };
 
-  handleInputChange = event => {
-    this.setState({ userCommand: event.target.value });
-  };
-
-  startButtons() {
-    if (this.state.login === true) {
-      return (
-        <div>
-          <button onClick={() => this.handleLoadGame(this.state.login)}>Load Game</button>
-          <button onClick={() => this.handleLogoutButton(this.state.login)}>Log Out</button>
-        </div>
-      )
-    } else {
-      return (
-        <button onClick = {() => this.handleLoginButton} >Log In to Save and Load</button>
-      )
-    }
+  describeRoom(currLoc) {
+    console.log("@ describeRoom() current room = ", currLoc);
+    let relay = [];
+    relay.push(room[currLoc].name);
+    relay.push(room[currLoc].desc);
+    // let items = [];
+    // if (room[currLoc].items.length !== 0) {
+    //   room[currLoc].items.forEach(ele => {
+    //     items.push(ele.shortName);
+    //   })
+    //   relay.push("You see ")
+    let exits =[];
+    if (room[currLoc].n.to && room[currLoc].n.visible) exits.push("north");
+    if (room[currLoc].ne.to && room[currLoc].ne.visible) exits.push("northeast");
+    if (room[currLoc].e.to && room[currLoc].e.visible) exits.push("east");
+    if (room[currLoc].se.to && room[currLoc].se.visible) exits.push("southeast");
+    if (room[currLoc].s.to && room[currLoc].s.visible) exits.push("south");
+    if (room[currLoc].sw.to && room[currLoc].sw.visible) exits.push("southwest");
+    if (room[currLoc].w.to && room[currLoc].w.visible) exits.push("west");
+    if (room[currLoc].nw.to && room[currLoc].nw.visible) exits.push("northwest");
+    if (room[currLoc].up.to && room[currLoc].up.visible) exits.push("up");
+    if (room[currLoc].down.to && room[currLoc].down.visible) exits.push("down");
+    if (room[currLoc].in.to && room[currLoc].in.visible) exits.push("in");
+    if (room[currLoc].out.to && room[currLoc].out.visible) exits.push("out");
+    relay.push("Exits: "+exits.join(", "));
+    this.echo(relay, this.state.textBuffer);
   }
 
   handleNewGame = () => {
@@ -308,6 +277,10 @@ class App extends Component {
       inProgress: true
     })
   }
+
+  // *
+  // * BUTTON HANDLING
+  // *
 
   handleLoginButton = () => {
     console.log("Login button firing");
@@ -355,103 +328,115 @@ class App extends Component {
 
   }
 
-  handleInputChange = event => {
-    this.setState({ userCommand: event.target.value });
-  };
-
-  handleUserCommand = event => {
-    event.preventDefault();
-    // check for non-empty command input
-    if (this.state.userCommand) {
-      let thisCommand = this.state.userCommand;
-      // echo command
-      this.setState({
-        textBuffer: echo([this.state.userCommand], this.state.textBuffer, true),
-        userCommand: ""
-      });
-      // start command processing and turn action here
-      parseCommand(thisCommand);
-      // assure roomDesc window is scrolled to bottom
-      updateScroll();
-    }
-    // updateScroll();
-  };
+  // *
+  // * HANDLE USER AUTHENTICATION
+  // *
 
   toggleAuthenticateStatus = () => {
     // check authenticated status and toggle state based on that
     this.setState({ authenticated: Auth.isUserAuthenticated() })
   }
 
+  startNewGame() {
+    this.describeRoom(this.state.player.location);
+  }
+
   componentDidMount() {
-    window.addEventListener('resize', () => {
-      this.setState({
-          isMobile: window.innerWidth < 768
-      });
-    }, false);
+    this.startNewGame();
+    
+    // currently unused monitor; remove if unnecessary
+    // window.addEventListener('resize', () => {
+    //   this.setState({
+    //       isMobile: window.innerWidth < 768
+    //   });
+    // }, false);
+
     // check if user is logged in on refresh
     this.toggleAuthenticateStatus()
-    this.loadCurrentState();
+
+    // delete if unnecessary
+    // this.loadCurrentState();
   }
 
   showGame() {
     if (this.state.inProgress === true) {
       return (
-        <Game 
-          isMobile={this.state.isMobile} 
-          player={this.state.player} 
-          entities={this.state.entities} 
-          textBuffer={this.state.textBuffer} 
-          login={this.state.login} 
-          viewAboutToggle={this.viewAboutToggle.bind(this)}
-          viewHelpToggle={this.viewHelpToggle.bind(this)}
-          viewCharacterToggle={this.viewCharacterToggle.bind(this)}
-          handleQuitButton={this.handleQuitButton} 
-          handleSaveButton={this.handleSaveButton} 
-          handleLoginButton={this.handleLoginButton}>
-          <form className="userCommandLine">
-            <div className="form-group">
-              <label>>&nbsp;</label>
-              <Input
-                value={this.state.userCommand}
-                onChange={this.handleInputChange}
-                name="userCommand"
-                type="text"
-                id="command"
-                onClick={(e) => {this.handleUserCommand(e)}} 
-              />
-              <button type="submit" onClick={(e) => {this.handleUserCommand(e)}} className="btn btn-success d-none">Submit</button>
-            </div>
-          </form>
-        </Game>
+        <div>
+          <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
+            <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
+            <ModalBody>
+              <Statistics stats={this.state.player.stats}/>
+              <Equipment equipment={this.state.player.equipment}/>
+              <Inventory inventory={this.state.player.inventory}/>
+            </ModalBody>
+          </Modal>
+          <About 
+            viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />
+          <Help 
+            viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
+          <Game 
+            isMobile={this.state.isMobile} 
+            player={this.state.player} 
+            entities={this.state.entities} 
+            textBuffer={this.state.textBuffer} 
+            login={this.state.login} 
+            authenticated={this.state.authenticated}
+            viewAboutToggle={this.viewAboutToggle.bind(this)}
+            viewHelpToggle={this.viewHelpToggle.bind(this)}
+            viewCharacterToggle={this.viewCharacterToggle.bind(this)}
+            handleQuitButton={this.handleQuitButton}
+            handleSaveButton={this.handleSaveButton}
+            handleLoginButton={this.handleLoginButton}>
+            <form className="userCommandLine">
+              <div className="form-group">
+                <label>>&nbsp;</label>
+                <Input
+                  value={this.state.userCommand}
+                  onChange={this.handleInputChange}
+                  name="userCommand"
+                  type="text"
+                  id="command"
+                  onClick={(e) => {this.handleUserCommand(e)}} 
+                />
+                <button type="submit" onClick={(e) => {this.handleUserCommand(e)}} className="btn btn-success d-none">Submit</button>
+              </div>
+            </form>
+          </Game>
+        </div>
       )
     } else {
       return (
         <div id="startScreen">
-          <div className="buttonArea">
-            <button onClick={() => this.handleNewGame()}>Start New Game</button>
-            {this.startButtons()}  
-          </div>
+          {/* <div className="buttonArea"> */}
+          {/* ASYNC DIFFICULTY HERE */}
+            {this.state.authenticated ? (
+              <div>
+                <PrivateRoute path="/dashboard" component={DashboardPage}/>
+              </div>
+            ) : (
+              <button className="gameButton smButton" onClick={() => this.handleLoginButton(this.state.login)}><Link to="/login">Log in</Link></button>
+            )}
+          {/* </div> */}
+          <button className="gameButton smButton" onClick={() => this.handleNewGame()}>Start New Game</button>
         </div>
       )
     }
   }
-
+  
   render() {
     return (
       <Wrapper>
-        <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
-          <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
-          <ModalBody>
-            <Statistics stats={this.state.player.stats}/>
-            <Equipment equipment={this.state.player.equipment}/>
-            <Inventory inventory={this.state.player.inventory}/>
-          </ModalBody>
-        </Modal>
-        <About 
-          viewAbout={this.state.viewAbout}viewAboutToggle={this.viewAboutToggle.bind(this)} />
-        <Help 
-          viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
-        {this.showGame()}
+        <MuiThemeProvider muiTheme={getMuiTheme()}>
+          <Router>
+            <div>        
+              {this.showGame()}
+              <PropsRoute exact path="/" component={HomePage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+              <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+              <LoggedOutRoute path="/signup" component={SignUpPage}/>
+              <Route path="/logout" component={LogoutFunction}/>
+            </div>
+          </Router>
+        </MuiThemeProvider>
       </Wrapper>
     )
   };
