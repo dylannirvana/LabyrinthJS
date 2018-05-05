@@ -65,6 +65,30 @@ let isMobile = window.innerWidth < 768 ? true : false;
 // remove tap delay, essential for MaterialUI to work properly
 injectTapEventPlugin();
 
+const newGameState = {
+  player: {
+    location: 0,
+    equipment: {
+      wielded: "nothing",
+      head: "nothing",
+      body: "nothing",
+      arms: "nothing",
+      legs: "nothing"
+    },
+    inventory: [],
+    stats: {
+      health: 100,
+      attack: 0,
+      defense: 3
+    },
+    options: {
+      verbose: true,
+    }
+  },
+  entities: [],
+  textBuffer: []
+};
+
 class App extends Component {
 
   state = {
@@ -76,37 +100,49 @@ class App extends Component {
     viewAbout: false,
     viewHelp: false,
     isMobile: isMobile,
-    player: {
-      location: 0,
-      equipment: {
-        wielded: "nothing",
-        head: "nothing",
-        body: "nothing",
-        arms: "nothing",
-        legs: "nothing"
-      },
-      inventory: [],
-      stats: {
-        health: 100,
-        attack: 0,
-        defense: 3
-      },
-      options: {
-        verbose: true,
-      }
-    },
-    entities: [],
-    textBuffer: []
+    // move below into newGameState
+    game: newGameState
+
+    // }
+    // player: {
+    //   location: 0,
+    //   equipment: {
+    //     wielded: "nothing",
+    //     head: "nothing",
+    //     body: "nothing",
+    //     arms: "nothing",
+    //     legs: "nothing"
+    //   },
+    //   inventory: [],
+    //   stats: {
+    //     health: 100,
+    //     attack: 0,
+    //     defense: 3
+    //   },
+    //   options: {
+    //     verbose: true,
+    //   }
+    // },
+    // entities: [],
+    // textBuffer: []
+    // move above into newGameState
   }
 
   echo = (relay, textBuffer, userCommand) => {
     let arr = textBuffer.concat();
     relay.forEach(ele => {
       if (userCommand) ele="> "+ele;
+      // keep textBuffer limited to 100 items
       if (arr.length > 100) arr.splice(0, 1);
       arr.push(ele);       
     });
-    this.setState({textBuffer: arr, userCommand: ""});
+    this.setState(prevState => ({
+      userCommand: "",
+      game: {
+        ...prevState.game,
+        textBuffer: arr
+      }
+    }));
     updateScroll();
   };
 
@@ -126,7 +162,7 @@ class App extends Component {
     if (this.state.userCommand) {
       let thisCommand = this.state.userCommand;
       // echo command
-      await this.echo([this.state.userCommand], this.state.textBuffer, true)
+      await this.echo([this.state.userCommand], this.state.game.textBuffer, true)
       // start command processing and turn action here
       this.parseCommand(thisCommand);
       // assure roomDesc window is scrolled to bottom
@@ -144,9 +180,9 @@ class App extends Component {
       this.movePlayer(commandWords)
     } else { 
       if (commandWords[0] === "l" || commandWords[0] === "look") {
-        this.describeRoom(this.state.player.location);
+        this.describeRoom(this.state.game.player.location);
       } else {
-        this.echo(["Unknown command. - in parseCommand()"], this.state.textBuffer) 
+        this.echo(["Unknown command. - in parseCommand()"], this.state.game.textBuffer) 
       }
     };
     // look command
@@ -158,7 +194,7 @@ class App extends Component {
 
   // actions
   movePlayer(words) {
-    let currLoc = this.state.player.location;
+    let currLoc = this.state.game.player.location;
     let newLoc;
     let nope = "You can't go that way.";
     let blocked = "That way is blocked.";
@@ -231,16 +267,19 @@ class App extends Component {
         break;
       default : newLoc = "Movement not defined. - at movePlayer(), words[0] = "+words[0]
     }
-    if (typeof newLoc !== "number") { this.echo([newLoc], this.state.textBuffer) } else {
+    if (typeof newLoc !== "number") { this.echo([newLoc], this.state.game.textBuffer) } else {
       this.setState(prevState => ({
-        player: {
-           ...prevState.player,
-           location: newLoc
+          game: {
+            ...prevState.game,
+            player: {
+               ...prevState.game.player,
+               location: newLoc
+          }
         }
       }))
-      this.describeRoom(this.state.player.location);
+      this.describeRoom(this.state.game.player.location);
     }
-    console.log("@parseCommand current room = ", this.state.player.location);
+    console.log("@parseCommand current room = ", this.state.game.player.location);
   };
 
   describeRoom(currLoc) {
@@ -268,19 +307,17 @@ class App extends Component {
     if (room[currLoc].in.to && room[currLoc].in.visible) exits.push("in");
     if (room[currLoc].out.to && room[currLoc].out.visible) exits.push("out");
     relay.push("Exits: "+exits.join(", "));
-    this.echo(relay, this.state.textBuffer);
+    this.echo(relay, this.state.game.textBuffer);
   }
-
-  handleNewGame = () => {
-    console.log("New Game button firing");
-    this.setState({
-      inProgress: true
-    })
-  }
-
+  
   // *
   // * BUTTON HANDLING
   // *
+
+  handleNewGameButton = () => {
+    console.log("New Game button firing");
+    this.startNewGame();
+  }
 
   handleLoginButton = () => {
     console.log("Login button firing");
@@ -292,15 +329,15 @@ class App extends Component {
   }
 
   viewCharacterToggle = () => {
-    this.setState({viewCharacter: !this.state.viewCharacter});
+    this.setState({viewCharacter: !this.state.game.viewCharacter});
   }
 
   viewAboutToggle = () => {
-    this.setState({viewAbout: !this.state.viewAbout});
+    this.setState({viewAbout: !this.state.game.viewAbout});
   }
 
   viewHelpToggle = () => {
-    this.setState({viewHelp: !this.state.viewHelp});
+    this.setState({viewHelp: !this.state.game.viewHelp});
   }
   
   handleQuitButton = () => {
@@ -338,7 +375,12 @@ class App extends Component {
   }
 
   startNewGame() {
-    this.describeRoom(this.state.player.location);
+    this.setState({
+      inProgress: true,
+      game: newGameState
+    }, function() {
+      this.describeRoom(this.state.game.player.location);
+    });
   }
 
   componentDidMount() {
@@ -365,9 +407,9 @@ class App extends Component {
           <Modal isOpen={this.state.viewCharacter} toggle={this.viewCharacterToggle} className="characterModal">
             <ModalHeader toggle={this.viewCharacterToggle}>You</ModalHeader>
             <ModalBody>
-              <Statistics stats={this.state.player.stats}/>
-              <Equipment equipment={this.state.player.equipment}/>
-              <Inventory inventory={this.state.player.inventory}/>
+              <Statistics stats={this.state.game.player.stats}/>
+              <Equipment equipment={this.state.game.player.equipment}/>
+              <Inventory inventory={this.state.game.player.inventory}/>
             </ModalBody>
           </Modal>
           <About 
@@ -376,9 +418,9 @@ class App extends Component {
             viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
           <Game 
             isMobile={this.state.isMobile} 
-            player={this.state.player} 
-            entities={this.state.entities} 
-            textBuffer={this.state.textBuffer} 
+            player={this.state.game.player} 
+            entities={this.state.game.entities} 
+            textBuffer={this.state.game.textBuffer} 
             login={this.state.login} 
             authenticated={this.state.authenticated}
             viewAboutToggle={this.viewAboutToggle.bind(this)}
@@ -396,6 +438,7 @@ class App extends Component {
                   name="userCommand"
                   type="text"
                   id="command"
+                  data-lpignore="true"
                   onClick={(e) => {this.handleUserCommand(e)}} 
                 />
                 <button type="submit" onClick={(e) => {this.handleUserCommand(e)}} className="btn btn-success d-none">Submit</button>
@@ -417,7 +460,7 @@ class App extends Component {
               <button className="gameButton smButton" onClick={() => this.handleLoginButton(this.state.login)}><Link to="/login">Log in</Link></button>
             )}
           {/* </div> */}
-          <button className="gameButton smButton" onClick={() => this.handleNewGame()}>Start New Game</button>
+          <button className="gameButton smButton" onClick={() => this.handleNewGameButton()}>Start New Game</button>
         </div>
       )
     }
