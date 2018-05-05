@@ -1,5 +1,4 @@
 import React from "react";
-import "./Statistics.css";
 
 function showHealth(health) {
   if (health === 100) {

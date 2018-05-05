@@ -2,11 +2,11 @@ import React from "react";
 import "./Game.css";
 // import { Col, Row, Grid, Clearfix } from "react-bootstrap";
 import { Col, Row, Container } from "reactstrap";
-import Title from "../Title";
-import Inventory from "../Inventory";
-import Equipment from "../Equipment";
-import Statistics from "../Statistics";
-import RoomDesc from "../RoomDesc";
+import Title from "../Title.jsx";
+import Inventory from "../Inventory.jsx";
+import Equipment from "../Equipment.jsx";
+import Statistics from "../Statistics.jsx";
+import RoomDesc from "../RoomDesc.jsx";
 
 const Game = props => (
   <Container >

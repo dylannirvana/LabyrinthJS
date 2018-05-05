@@ -1,5 +1,4 @@
 import React from "react";
-import "./Inventory.css";
 
 const showInventory = (inv) => {
   if (inv.length === 0) {

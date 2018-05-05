@@ -1,5 +1,4 @@
 import React from "react";
-import "./Help.css";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 const Help = (props) => (
