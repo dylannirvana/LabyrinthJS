@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import room from "../Objects/RoomBuilder";
-import item from "../Objects/ItemBuilder";
 import About from "../components/About.jsx";
 import Help from "../components/Help.jsx";
 import Game from "../components/Game";
@@ -9,20 +8,32 @@ import Inventory from "../components/Inventory.jsx";
 import Equipment from "../components/Equipment.jsx";
 import Statistics from "../components/Statistics.jsx";
 import { Input } from "../components/Form";
+var Item = require("../Objects/ItemBuilder");
 
-const moveWords = [
-  "n", "ne", "e", "se", "s", "sw", "w", "nw", "north", "east", "south", "west", "northeast", "southeast", "southwest", "northwest", "go", "walk", "run", "enter", "in", "up", "u", "d", "down", "leave"
-];
 // const newTurn = (location) => {
 
 // };
 
-const initializeVariables = (item) => {
-  // item.forEach(ele) {
-    // let window[ele.variableName]
-  // }
-}
-// create keyword associations
+const uselessWords = [
+  "the", "a", "at"
+]
+
+
+const generalCommands = [
+  "look", "l", "wait", "z", "exa", "examine"
+];
+
+const itemCommands = [
+  "take", "get", "pick", "grab", "drop", "discard", "hold"
+];
+
+const specialCommands = [
+  "save", "load", "again", "g", "restore", "load"
+];
+
+const moveCommands = [
+  "n", "ne", "e", "se", "s", "sw", "w", "nw", "north", "east", "south", "west", "northeast", "southeast", "southwest", "northwest", "go", "walk", "run", "enter", "in", "up", "u", "d", "down", "leave"
+];
 
 const updateScroll = () => {
   var element = document.getElementById("roomDesc");
@@ -39,7 +50,7 @@ let gameData = {
       arms: "nothing",
       legs: "nothing"
     },
-    inventory: [],
+    inventory: [Item.cellPhone],
     stats: {
       health: 100,
       attack: 0,
@@ -56,14 +67,16 @@ let gameData = {
 class GamePage extends React.Component {
 
   componentDidMount() {
+    console.log("item =", Item);
+
     // update authenticated state on logout
-    this.props.toggleAuthenticateStatus()
+    this.props.toggleAuthenticateStatus();
 
     if (this.loadData) {
       gameData = this.loadData;
     } else {
       this.describeRoom(this.state.game.player.location);
-    }
+    };
   }
 
   state = {
@@ -102,8 +115,8 @@ class GamePage extends React.Component {
     // move above into newGameState
   }
 
-  echo = (relay, textBuffer, userCommand) => {
-    let arr = textBuffer.concat();
+  echo = (relay, userCommand) => {
+    let arr = this.state.game.textBuffer.concat();
     relay.forEach(ele => {
       if (userCommand) ele="> "+ele;
       // keep textBuffer limited to 100 items
@@ -118,7 +131,9 @@ class GamePage extends React.Component {
       }
     }));
     updateScroll();
-  };
+  }
+
+  handleUserCommand = this.handleUserCommand.bind(this);  
 
   // *
   // * HANDLE PLAYER COMMAND INPUT
@@ -128,45 +143,99 @@ class GamePage extends React.Component {
     this.setState({ userCommand: event.target.value });
   };
 
-  handleUserCommand = this.handleUserCommand.bind(this);
-
   async handleUserCommand(event) {
     event.preventDefault();
     // check for non-empty command input
     if (this.state.userCommand) {
       let thisCommand = this.state.userCommand;
       // echo command
-      await this.echo([this.state.userCommand], this.state.game.textBuffer, true)
+      await this.echo([this.state.userCommand], true)
       // start command processing and turn action here
       this.parseCommand(thisCommand);
       // assure roomDesc window is scrolled to bottom
       updateScroll();
     }
-  };
+  }
 
   // parse command
-  parseCommand = (command) => {
-    command.toLowerCase()
-    let commandWords = command.split(" ", 5);
-    console.log("commandWords =", commandWords);
+  parseCommand = (commandInput) => {
+    const commandWords = commandInput.trim().toLowerCase().split(" ", 8);
+    // trim unnecessary words
+    let command = [];
+    commandWords.forEach(ele => {if (!uselessWords.includes(ele)) command.push(ele)});
+    console.log("commandWords =", command);
     //check for move command
-    if (moveWords.includes(commandWords[0])) {
-      this.movePlayer(commandWords)
-    } else { 
-      if (commandWords[0] === "l" || commandWords[0] === "look") {
-        this.describeRoom(this.state.game.player.location);
-      } else {
-        this.echo(["Unknown command. - in parseCommand()"], this.state.game.textBuffer) 
-      }
-    };
-    // look command
-    // word array
-    // turn into sentence array
-      // 
-    // analyze first word
-  };
+    if (moveCommands.indexOf(command[0]) !== -1) {console.log("moveCommands index =", moveCommands.indexOf(command[0])); this.movePlayer(command)}
+    else if (specialCommands.indexOf(command[0]) !== -1) {this.specialAction(command)}
+    else if (itemCommands.indexOf(command[0]) !== -1) {this.itemAction(command)}
+    else if (generalCommands.indexOf(command[0]) !== -1) {this.generalAction(command)}
+    else {this.echo(["SYSTEM: Unknown command. - in parseCommand(), command[0] =", command[0]])};
+  }
 
-  // actions
+  // *
+  // * Special actions
+  // *
+
+  specialAction(words) {
+    let response;
+    switch (words[0]) {
+      default : response = undefined
+    }
+    !response ? this.echo(["SYSTEM: Command not defined. - at specialAction(), words[0] = '"+words[0]+"'"]) : response(); 
+  }
+
+  // *
+  // * Item actions
+  // *
+
+  itemAction(words) {
+    let response;
+    switch (words[0]) {
+      default : response = undefined
+    }
+    !response ? this.echo(["SYSTEM: Command not defined. - at itemAction(), words[0] = '"+words[0]+"'"]) : response(); 
+  }
+  
+  // *
+  // * General actions
+  // *
+
+  generalAction(words) {
+    let response;
+    switch (words[0]) {
+      case "l" : case "look" : case "exa" : case "examine" :
+        if (words.length === 1) {
+          response = () => this.describeRoom (this.state.game.player.location);
+        } else {
+          let itemFinder = {owner: undefined, invIndex: undefined};
+          this.state.game.player.inventory.forEach((ele, i) => {
+            if (ele.keywords.includes(words[1])) {
+              itemFinder.owner = "player";
+              itemFinder.invIndex = i;
+            }
+          });
+          if (itemFinder.owner === "player") {
+            response = () => this.echo([this.state.game.player.inventory[itemFinder.invIndex].longDesc])
+        } else {
+          response = () => this.echo(["You don't see that here."])
+        }
+        // entity inventory check
+        // } else if (this.state.entities.forEach((ele, i) => {
+        //   ele.inventory.includes(words[1])
+      } break;
+      default : response = undefined
+    }
+    if (response === undefined) {
+      this.echo(["SYSTEM: Command not defined. - at generalAction(), words[0] = '"+words[0]+"'"])
+    } else {
+      response(); 
+    }
+  }
+
+  // *
+  // * Move actions
+  // *
+
   movePlayer(words) {
     let currLoc = this.state.game.player.location;
     let newLoc;
@@ -177,7 +246,7 @@ class GamePage extends React.Component {
     if ((words[0] === "n" || words[0] === "north") && (words[1] === "w" || words[1] === "west")) {words[0] = "nw"};
     if ((words[0] === "s" || words[0] === "south") && (words[1] === "e" || words[1] === "east")) {words[0] = "se"};
     if ((words[0] === "s" || words[0] === "south") && (words[1] === "w" || words[1] === "west")) {words[0] = "sw"};
-    console.log("adjusted words[0] =", words[0]);
+    console.log("movePlayer() : adjusted words[0] =", words[0]);
     switch (words[0]) {
       case "n" : case "north" :
         if (room[currLoc].n.to) {
@@ -239,9 +308,9 @@ class GamePage extends React.Component {
           room[currLoc].out.blocked ? newLoc = blocked : newLoc = room[currLoc].out.to;
         } else { newLoc = nope }
         break;
-      default : newLoc = "SYSTEM: Movement not defined. - at movePlayer(), words[0] = "+words[0]
+      default : newLoc = "SYSTEM: Movement not defined. - at movePlayer(), words[0] = '"+words[0]+"'"
     }
-    if (typeof newLoc !== "number") { this.echo([newLoc], this.state.game.textBuffer) } else {
+    if (typeof newLoc !== "number") { this.echo([newLoc]) } else {
       this.setState(prevState => ({
           game: {
             ...prevState.game,
@@ -253,7 +322,6 @@ class GamePage extends React.Component {
       }))
       this.describeRoom(this.state.game.player.location);
     }
-    console.log("@parseCommand current room = ", this.state.game.player.location);
   };
 
   describeRoom(currLoc) {
@@ -281,7 +349,7 @@ class GamePage extends React.Component {
     if (room[currLoc].in.to && room[currLoc].in.visible) exits.push("in");
     if (room[currLoc].out.to && room[currLoc].out.visible) exits.push("out");
     relay.push("Exits: "+exits.join(", "));
-    this.echo(relay, this.state.game.textBuffer);
+    this.echo(relay);
   }
   
   // *
@@ -350,6 +418,7 @@ class GamePage extends React.Component {
                 type="text"
                 id="command"
                 data-lpignore="true"
+                autoComplete="off"
                 onClick={(e) => {this.handleUserCommand(e)}} 
               />
               <button type="submit" onClick={(e) => {this.handleUserCommand(e)}} className="btn btn-success d-none">Submit</button>

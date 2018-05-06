@@ -1,16 +1,17 @@
 import React from "react";
 
 const showInventory = (inv) => {
+  console.log("Inventory.jsx => showInventory() => inv =", inv);
   if (inv.length === 0) {
     return (
       <p>Nothing.</p>
     )
   } else {
     return (
-      inv.inventory.map((item) => {
+      inv.map((item, i) => {
         if (item.quantity === undefined) {
           return (
-            <p>{item.shortName}</p>
+            <p key={i}>{item.shortName}</p>
           )
         } else {
           return (

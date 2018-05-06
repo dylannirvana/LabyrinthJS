@@ -2,11 +2,10 @@
 
 function Item(
   // arguments here
-  itemId, variableName, shortName, longDesc, keywords, invSize, wear, value, thrown
+  itemId, shortName, longDesc, keywords, invSize, wear, value, thrown
   ) {
   // properties here
   this.itemId = itemId; // itemId
-  this.variableName = variableName;
   this.shortName = shortName; // short name
   this.longDesc = longDesc; // long description
   this.keywords = keywords; // synonyms and keywords

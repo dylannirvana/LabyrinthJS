@@ -9,7 +9,7 @@ let newRoom = new Room(
   0,  // location
   "Room Zero", // name
   "This is Room 0.",  // desc
-  [0],  // [items]
+  [],  // [items]
   [],  // [entities]
   { to: 2, minPass: true, visible: true, blocked: false }, // N
   { to: undefined, minPass: true, visible: true, blocked: false }, // NE
