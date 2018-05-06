@@ -7,6 +7,7 @@ import Inventory from "../Inventory.jsx";
 import Equipment from "../Equipment.jsx";
 import Statistics from "../Statistics.jsx";
 import RoomDesc from "../RoomDesc.jsx";
+import { Link } from "react-router-dom";
 
 const Game = props => (
   <Container >
@@ -15,12 +16,12 @@ const Game = props => (
         <Title>Labyrinth.js</Title>
       </Col>
       <Col xs={6} md={{size: 3, order: 1}} className="buttonArea">
-        {props.authenticated ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button className="gameButton smButton" onClick={() => props.handleLoginButton(props.login)}>Log In</button>)}
+        {props.authenticated ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button className="gameButton smButton" ><Link to="/login">Log In</Link></button>)}
         <button className="gameButton smButton" onClick={props.viewHelpToggle}>Help</button>
       </Col>
       <Col xs={6} md={{size: 3, order: 5}} className="buttonArea">
         <button className="gameButton smButton" onClick={props.viewAboutToggle} >About</button>
-        <button className="gameButton smButton" onClick={props.handleQuitButton}>Quit</button>
+        <button className="gameButton smButton"><Link to="/">Quit</Link></button>
       </Col>
       <Col xs={12} md={{size: 9, order: 4}}>
         <RoomDesc text={props.textBuffer} />

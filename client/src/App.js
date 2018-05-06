@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom';
 
 import GamePage from './pages/GamePage.jsx';
+import HomePage from './pages/GamePage.jsx';
 
 import { 
   PrivateRoute, 
@@ -29,9 +30,6 @@ import Auth from './utils/Auth';
 
 import Wrapper from "./components/Wrapper/Wrapper";
 
-// currently unused utility variable, referenced in state and componentDidMount()
-let isMobile = window.innerWidth < 768 ? true : false;
-
 // remove tap delay, essential for MaterialUI to work properly
 injectTapEventPlugin();
 
@@ -39,10 +37,7 @@ class App extends Component {
 
   state = {
     userCommand: "",
-    inProgress: true,
     authenticated: false,
-    login: false,
-    isMobile: isMobile,
     loadData: undefined
   }
 
@@ -68,19 +63,15 @@ class App extends Component {
 
   handleLoginButton = () => {
     console.log("Login button firing");
-
   }
 
   handleLogoutButton = data => {
     console.log("Logout button firing");
   }
 
-
   handleLoadGame = data => {
 
   }
-
-
 
   // *
   // * HANDLE USER AUTHENTICATION
@@ -91,49 +82,36 @@ class App extends Component {
     this.setState({ authenticated: Auth.isUserAuthenticated() })
   }
 
-
   componentDidMount() {
-    
-    // currently unused monitor; remove if unnecessary
-    // window.addEventListener('resize', () => {
-    //   this.setState({
-    //       isMobile: window.innerWidth < 768
-    //   });
-    // }, false);
-
     // check if user is logged in on refresh
     this.toggleAuthenticateStatus()
-
-    // delete if unnecessary
-    // this.loadCurrentState();
   }
 
-  showGame() {
-    if (this.state.inProgress === true) {
-      return (
-        <GamePage 
-          toggleAuthenticateStatus={this.toggleAuthenticateStatus.bind(this)}
-          handleQuitButton={this.handleQuitButton.bind(this)}
-          loadData={this.loadData}
-        />
-      )
-    } else {
-      return (
-        <div id="startScreen">
-          {/* <div className="buttonArea"> */}
-          {/* ASYNC DIFFICULTY HERE */}
-            {this.state.authenticated ? (
-              <div>
-              </div>
-            ) : (
-              <button className="gameButton smButton" onClick={() => this.handleLoginButton(this.state.login)}><Link to="/login">Log in</Link></button>
-            )}
-          {/* </div> */}
-          <button className="gameButton smButton" onClick={() => this.handleNewGameButton()}>Start New Game</button>
-        </div>
-      )
-    }
-  }
+  // showGame() {
+  //   if (this.state.inProgress === true) {
+  //     return (
+  //       <GamePage 
+  //         toggleAuthenticateStatus={this.toggleAuthenticateStatus}
+
+  //       />
+  //     )
+  //   } else {
+  //     return (
+  //       <div id="startScreen">
+  //         {/* <div className="buttonArea"> */}
+  //         {/* ASYNC DIFFICULTY HERE */}
+  //           {this.state.authenticated ? (
+  //             <div>
+  //             </div>
+  //           ) : (
+  //             <button className="gameButton smButton" onClick={() => this.handleLoginButton(this.state.login)}><Link to="/login">Log in</Link></button>
+  //           )}
+  //         {/* </div> */}
+  //         <button className="gameButton smButton" onClick={() => this.handleNewGameButton()}>Start New Game</button>
+  //       </div>
+  //     )
+  //   }
+  // }
   
   render() {
     return (
@@ -141,8 +119,29 @@ class App extends Component {
         <MuiThemeProvider muiTheme={getMuiTheme()}>
           <Router>
             <div>
-              {this.showGame()}       
-              <PropsRoute exact path="/" component={GamePage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
+              {/* {this.showGame()}        */}
+              {this.state.authenticated ? (
+                <div className="top-bar-right">
+                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/logout">Log out</Link>
+                </div>
+              ) : (
+                <div className="top-bar-right">
+                  <Link to="/login">Log in</Link>
+                  <Link to="/signup">Sign up</Link>
+                </div>
+              )}
+              <PropsRoute exact path="/game" component={GamePage} 
+                toggleAuthenticateStatus={this.toggleAuthenticateStatus}
+                handleQuitButton={this.handleQuitButton.bind(this)}
+                handleLoginButton={this.handleLoginButton} 
+                loadData={this.loadData} />
+              <PropsRoute exact path="/" component={HomePage}
+                toggleAuthenticateStatus={this.toggleAuthenticateStatus.bind()}
+                handlenewGameButton={this.handleNewGameButton} 
+                handleLoadGame={this.handleLoadGame.bind(this)}
+                handleLoginButton={this.handleLoginButton.bind(this)} 
+                handleLogoutButton={this.handleLogoutButton} />
               <PrivateRoute path="/dashboard" component={DashboardPage}/>
               <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
               <LoggedOutRoute path="/signup" component={SignUpPage}/>

@@ -337,6 +337,7 @@ class GamePage extends React.Component {
           viewAboutToggle={this.viewAboutToggle.bind(this)}
           viewHelpToggle={this.viewHelpToggle.bind(this)}
           viewCharacterToggle={this.viewCharacterToggle.bind(this)}
+          handleLoginButton={this.handleLoginButton}  
           handleSaveButton={this.handleSaveButton}
           handleQuitButton={this.props.handleQuitButton}>
           <form className="userCommandLine">
