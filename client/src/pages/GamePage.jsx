@@ -253,16 +253,19 @@ class GamePage extends React.Component {
 
   dropItem(word) {
     let item = undefined;
+    console.log("player inv =", this.state.game.player.inventory);
     this.state.game.player.inventory.forEach((ele, i) => {
+      console.log("ele keywords =", ele.keywords);
       if (ele.keywords.includes(word)) {
-        item = i;
+        console.log("true");
+        item = this.state.game.player.inventory[i];
+        console.log("item =", item);
       }
     });
     if (!item) {this.echo(["You don't have that."])}
     else {
       let inv = this.state.game.player.inventory.concat();
       item = inv.splice(item, 1);
-      console.log("item =", item);
       room[this.state.game.player.location].inventory.push(item[0]);
       this.setState(prevState => ({
         game: {
@@ -274,7 +277,6 @@ class GamePage extends React.Component {
         }
       }))
       this.echo(["You drop the "+item[0].shortName+"."])
-      console.log("thisRoom =", room[this.state.game.player.location]);
     }
   }
 
@@ -427,18 +429,18 @@ class GamePage extends React.Component {
     relay.push(room[currLoc].desc);
     if (room[currLoc].inventory.length !== 0) {
       let items = ["You see "];
+      console.log("room inv.length =", room[currLoc].inventory.length);
       room[currLoc].inventory.forEach((ele, i) => {
         if (i === 0) {
           items+="a "+ele.shortName;
+        } else 
+        if (i > 0 && i === room[currLoc].inventory.length - 1) {
+          items+=" and a "+ele.shortName;
         } else {
-          if (i !== room[currLoc].inventory.length) {
-            items+=", a "+ele.shortName;
-          } else {
-            items+=", and a "+ele.shortName;
-          }
+          items+=", a "+ele.shortName;
         }
-        items+=" here.";
       })
+      items+=" here.";
       relay.push(items);
     }
     console.log("@ describeRoom() current room object = ", room[currLoc]);
