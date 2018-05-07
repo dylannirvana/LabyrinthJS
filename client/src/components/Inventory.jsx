@@ -1,7 +1,6 @@
 import React from "react";
 
 const showInventory = (inv) => {
-  console.log("Inventory.jsx => showInventory() => inv =", inv);
   if (inv.length === 0) {
     return (
       <p>Nothing.</p>

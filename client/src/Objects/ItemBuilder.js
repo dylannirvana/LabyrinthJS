@@ -16,12 +16,10 @@ let cellPhone = new Item(
   1,  // invSize
   false, // wear
   undefined,  // value
-  "You hurl your cell phone across the room. It makes a satisfying crunch, but fails to do anything else." // thrown
 );
 
-
 module.exports = {
-  cellPhone: cellPhone
+  cellPhone: cellPhone,
 }
 
 

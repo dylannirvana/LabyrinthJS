@@ -9,6 +9,8 @@ import Equipment from "../components/Equipment.jsx";
 import Statistics from "../components/Statistics.jsx";
 import { Input } from "../components/Form";
 var Item = require("../Objects/ItemBuilder");
+// var Room = require("../Objects/RoomBuilder");
+// import room from "../Objects/RoomBuilder";
 
 // const newTurn = (location) => {
 
@@ -28,7 +30,7 @@ const itemCommands = [
 ];
 
 const specialCommands = [
-  "save", "load", "again", "g", "restore", "load"
+  "save", "load", "again", "g", "restore", "load", "again", "g"
 ];
 
 const moveCommands = [
@@ -40,9 +42,11 @@ const updateScroll = () => {
   element.scrollTop = element.scrollHeight;
 };
 
+let isMobile = window.innerWidth < 768 ? true : false;
+
 let gameData = {
   player: {
-    location: 0,
+    location: 2,
     equipment: {
       wielded: "nothing",
       head: "nothing",
@@ -67,7 +71,6 @@ let gameData = {
 class GamePage extends React.Component {
 
   componentDidMount() {
-    console.log("item =", Item);
 
     // update authenticated state on logout
     this.props.toggleAuthenticateStatus();
@@ -81,12 +84,14 @@ class GamePage extends React.Component {
 
   state = {
     userCommand: "",
+    lastCommand: "",
     inProgress: true,
     authenticated: false,
     login: false,
     viewCharacter: false,
     viewAbout: false,
     viewHelp: false,
+    isMobile: isMobile,
     // move below into newGameState
     game: gameData
 
@@ -156,20 +161,22 @@ class GamePage extends React.Component {
       updateScroll();
     }
   }
-
+  
   // parse command
   parseCommand = (commandInput) => {
     const commandWords = commandInput.trim().toLowerCase().split(" ", 8);
+    if (commandWords.length === 8) this.echo(["Warning - this game is pretty dumb, and will only accept sentences of up to 8 words. It probably won't even use all eight. Look out for Version 2, coming soon!"]);
     // trim unnecessary words
     let command = [];
+    // if (command[0] !== "g" || command[0] !== "again") {async (commandInput) => {await this.setState({ lastCommand: commandInput })}};
     commandWords.forEach(ele => {if (!uselessWords.includes(ele)) command.push(ele)});
     console.log("commandWords =", command);
     //check for move command
-    if (moveCommands.indexOf(command[0]) !== -1) {console.log("moveCommands index =", moveCommands.indexOf(command[0])); this.movePlayer(command)}
+    if (moveCommands.indexOf(command[0]) !== -1) {this.movePlayer(command)}
     else if (specialCommands.indexOf(command[0]) !== -1) {this.specialAction(command)}
     else if (itemCommands.indexOf(command[0]) !== -1) {this.itemAction(command)}
     else if (generalCommands.indexOf(command[0]) !== -1) {this.generalAction(command)}
-    else {this.echo(["SYSTEM: Unknown command. - in parseCommand(), command[0] =", command[0]])};
+    else {this.echo(["SYSTEM: Unknown command. - in parseCommand(), command =", command.join(", ")])};
   }
 
   // *
@@ -179,9 +186,15 @@ class GamePage extends React.Component {
   specialAction(words) {
     let response;
     switch (words[0]) {
+      case "again" : case "g" : 
+        if (this.state.lastCommand) {
+          response = () => this.parseCommand(this.state.lastCommand)
+        } else {
+          response = () => this.echo(["What do you want to do again?"])
+        }; break;
       default : response = undefined
     }
-    !response ? this.echo(["SYSTEM: Command not defined. - at specialAction(), words[0] = '"+words[0]+"'"]) : response(); 
+    !response ? this.echo(["SYSTEM: Command not defined. - at specialAction(), words = '"+words.join(", ")]) : response(); 
   }
 
   // *
@@ -191,45 +204,130 @@ class GamePage extends React.Component {
   itemAction(words) {
     let response;
     switch (words[0]) {
+      case "take" : case "get" : case "pick" : case "grab" : {
+        response = () => this.takeItem(words[1]); break;
+      }
+      case "drop" : case "discard" : {
+        response = () => this.dropItem(words[1]); break;
+      }
       default : response = undefined
     }
-    !response ? this.echo(["SYSTEM: Command not defined. - at itemAction(), words[0] = '"+words[0]+"'"]) : response(); 
+    !response ? this.echo(["SYSTEM: Command not defined. - at itemAction(), words = '"+words.join(", ")]) : response(); 
   }
-  
+
+  takeItem(word) {
+    let item = undefined;
+    if (!item) {
+      room[this.state.game.player.location].inventory.forEach((ele, i) => {
+        if (ele.keywords.includes(word)) {
+          item = room[this.state.game.player.location].inventory.splice(i, 1);
+        }
+      })
+    };
+    if (!item) {
+      this.state.game.player.inventory.forEach((ele) => {
+        if (ele.keywords.includes(word)) {
+          item = "self";
+        }
+      })
+    }
+    if (!item) {this.echo(["You don't see that here."])}
+    else if (item === "self") {this.echo(["You already have that!"])}
+    else if (item) {
+      if (item.invSize === 0) {this.echo[("You can't take that.")]}
+      else {
+        let inv = this.state.game.player.inventory.concat(item);
+        this.setState(prevState => ({
+          game: {
+            ...prevState.game,
+            player: {
+               ...prevState.game.player,
+               inventory: inv
+            }
+          }
+        }))
+        this.echo(["You pick up the "+item[0].shortName+"."])
+      }
+    }
+  }
+
+  dropItem(word) {
+    let item = undefined;
+    this.state.game.player.inventory.forEach((ele, i) => {
+      if (ele.keywords.includes(word)) {
+        item = i;
+      }
+    });
+    if (!item) {this.echo(["You don't have that."])}
+    else {
+      let inv = this.state.game.player.inventory.concat();
+      item = inv.splice(item, 1);
+      console.log("item =", item);
+      room[this.state.game.player.location].inventory.push(item[0]);
+      this.setState(prevState => ({
+        game: {
+          ...prevState.game,
+          player: {
+             ...prevState.game.player,
+             inventory: inv
+          }
+        }
+      }))
+      this.echo(["You drop the "+item[0].shortName+"."])
+      console.log("thisRoom =", room[this.state.game.player.location]);
+    }
+  }
+
   // *
   // * General actions
   // *
 
   generalAction(words) {
-    let response;
     switch (words[0]) {
       case "l" : case "look" : case "exa" : case "examine" :
-        if (words.length === 1) {
-          response = () => this.describeRoom (this.state.game.player.location);
-        } else {
-          let itemFinder = {owner: undefined, invIndex: undefined};
-          this.state.game.player.inventory.forEach((ele, i) => {
-            if (ele.keywords.includes(words[1])) {
-              itemFinder.owner = "player";
-              itemFinder.invIndex = i;
-            }
-          });
-          if (itemFinder.owner === "player") {
-            response = () => this.echo([this.state.game.player.inventory[itemFinder.invIndex].longDesc])
-        } else {
-          response = () => this.echo(["You don't see that here."])
+        this.examine(words); break;
+      default : this.echo(["SYSTEM: Command not defined. - at generalAction(), words = "+words.join(", ")])
+    }
+  }
+  
+  // Examine/Look action command
+  examine(words) {
+    console.log("examine() firing, words = "+words.join(", "));
+    let response = undefined;
+    if (words.length === 1) {
+      response = () => this.describeRoom(this.state.game.player.location);
+    }
+    if (!response) {
+      if (words[1] === "me" || words[1] === "myself") {
+        response = () => {this.echo(["You fine specimen, you."]); if (isMobile) this.viewCharacterToggle()} 
+      }
+    }
+    if (!response) {
+      this.state.game.player.inventory.forEach((ele, i) => {
+        if (ele.keywords.includes(words[1])) {
+          response = () => this.echo([ele.longDesc]);
         }
-        // entity inventory check
-        // } else if (this.state.entities.forEach((ele, i) => {
-        //   ele.inventory.includes(words[1])
-      } break;
-      default : response = undefined
+      })
     }
-    if (response === undefined) {
-      this.echo(["SYSTEM: Command not defined. - at generalAction(), words[0] = '"+words[0]+"'"])
-    } else {
-      response(); 
+    if (!response) {
+      room[this.state.game.player.location].inventory.forEach((ele, i) => {
+        if (ele.keywords.includes(words[1])) {
+          response = () => this.echo([ele.longDesc]);
+        }
+      })
     }
+    if (!response) {
+      room[this.state.game.player.location].features.forEach((ele, i) => {
+        if (ele.keywords.includes(words[1])) {
+          response = () => this.echo([ele.longDesc]);
+        }
+      });
+    }
+    // insert entity inventory check
+    if (!response) {
+      console.log("Tried to examine something and didn't find it.")
+      response = () => this.echo(["You don't see that here."])
+    } else response();
   }
 
   // *
@@ -246,7 +344,6 @@ class GamePage extends React.Component {
     if ((words[0] === "n" || words[0] === "north") && (words[1] === "w" || words[1] === "west")) {words[0] = "nw"};
     if ((words[0] === "s" || words[0] === "south") && (words[1] === "e" || words[1] === "east")) {words[0] = "se"};
     if ((words[0] === "s" || words[0] === "south") && (words[1] === "w" || words[1] === "west")) {words[0] = "sw"};
-    console.log("movePlayer() : adjusted words[0] =", words[0]);
     switch (words[0]) {
       case "n" : case "north" :
         if (room[currLoc].n.to) {
@@ -325,29 +422,39 @@ class GamePage extends React.Component {
   };
 
   describeRoom(currLoc) {
-    console.log("@ describeRoom() current room = ", currLoc);
     let relay = [];
     relay.push(room[currLoc].name);
     relay.push(room[currLoc].desc);
-    // let items = [];
-    // if (room[currLoc].items.length !== 0) {
-    //   room[currLoc].items.forEach(ele => {
-    //     items.push(ele.shortName);
-    //   })
-    //   relay.push("You see ")
+    if (room[currLoc].inventory.length !== 0) {
+      let items = ["You see "];
+      room[currLoc].inventory.forEach((ele, i) => {
+        if (i === 0) {
+          items+="a "+ele.shortName;
+        } else {
+          if (i !== room[currLoc].inventory.length) {
+            items+=", a "+ele.shortName;
+          } else {
+            items+=", and a "+ele.shortName;
+          }
+        }
+        items+=" here.";
+      })
+      relay.push(items);
+    }
+    console.log("@ describeRoom() current room object = ", room[currLoc]);
     let exits =[];
-    if (room[currLoc].n.to && room[currLoc].n.visible) exits.push("north");
-    if (room[currLoc].ne.to && room[currLoc].ne.visible) exits.push("northeast");
-    if (room[currLoc].e.to && room[currLoc].e.visible) exits.push("east");
-    if (room[currLoc].se.to && room[currLoc].se.visible) exits.push("southeast");
-    if (room[currLoc].s.to && room[currLoc].s.visible) exits.push("south");
-    if (room[currLoc].sw.to && room[currLoc].sw.visible) exits.push("southwest");
-    if (room[currLoc].w.to && room[currLoc].w.visible) exits.push("west");
-    if (room[currLoc].nw.to && room[currLoc].nw.visible) exits.push("northwest");
-    if (room[currLoc].up.to && room[currLoc].up.visible) exits.push("up");
-    if (room[currLoc].down.to && room[currLoc].down.visible) exits.push("down");
-    if (room[currLoc].in.to && room[currLoc].in.visible) exits.push("in");
-    if (room[currLoc].out.to && room[currLoc].out.visible) exits.push("out");
+    if (room[currLoc].n.to && room[currLoc].n.visible) {exits.push("north")};
+    if (room[currLoc].ne.to && room[currLoc].ne.visible) {exits.push("northeast")};
+    if (room[currLoc].e.to && room[currLoc].e.visible) {exits.push("east")};
+    if (room[currLoc].se.to && room[currLoc].se.visible) {exits.push("southeast")};
+    if (room[currLoc].s.to && room[currLoc].s.visible) {exits.push("south")};
+    if (room[currLoc].sw.to && room[currLoc].sw.visible) {exits.push("southwest")};
+    if (room[currLoc].w.to && room[currLoc].w.visible) {exits.push("west")};
+    if (room[currLoc].nw.to && room[currLoc].nw.visible) {exits.push("northwest")};
+    if (room[currLoc].up.to && room[currLoc].up.visible) {exits.push("up")};
+    if (room[currLoc].down.to && room[currLoc].down.visible) {exits.push("down")};
+    if (room[currLoc].in.to && room[currLoc].in.visible) {exits.push("in")};
+    if (room[currLoc].out.to && room[currLoc].out.visible) {exits.push("out")};
     relay.push("Exits: "+exits.join(", "));
     this.echo(relay);
   }

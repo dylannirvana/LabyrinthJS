@@ -12,7 +12,7 @@ function Item(
   this.invSize = invSize;  // undefined = not takeable
   this.wear = wear; // location as string
   this.value = value; // attack or defense power
-  this.thrown = thrown; // undefined = unthrowable
+  this.thrown = "You hurl the "+shortName+" at the wall with all your might. It makes a satisfying crunch, but has little other effect." // undefined = unthrowable
 
 }
 

@@ -1,5 +1,5 @@
 const Room = require("./RoomConstructor.js");
-// const Item = require("./ItemConstructor.js");
+const Item = require("./ItemConstructor.js");
 
 const room = [];
 
@@ -8,10 +8,10 @@ const room = [];
 let newRoom = new Room(
   0,  // location
   "Room Zero", // name
-  "This is Room 0.",  // desc
+  "This is Room 0. You shouldn't be in here.",  // desc
   [],  // [items]
   [],  // [entities]
-  { to: 2, minPass: true, visible: true, blocked: false }, // N
+  { to: undefined, minPass: true, visible: true, blocked: false }, // N
   { to: undefined, minPass: true, visible: true, blocked: false }, // NE
   { to: undefined, minPass: true, visible: true, blocked: false }, // E
   { to: undefined, minPass: true, visible: true, blocked: false }, // SE
@@ -51,11 +51,26 @@ newRoom = new Room(
 );
 room.push(newRoom);
 
+let brick = new Item(
+  1,  // itemId
+  "brick",  // shortName
+  "A dusty brick of stone.",  // longDesc
+  ["brick"], // keywords
+  5,  // invSize
+  false, // wear
+  2,  // value
+);
+let bust = new Item(
+  2,
+  "bust",
+  "A roughly-carved sculpture of an unknown gentleman. The unusually flat cranium does not contribute to any airs of wisdom. It once bore a name carved beneath the visage, but it has been scratched out.",
+  ["bust", "sculpture", "head"]
+)
 newRoom = new Room(
   2,  // location
   "Room Two", // name
-  "This is Room 2.",  // desc
-  [],  // [items]
+  "This is Room 2. There is a carved bust on a pedestal in the corner of the room.",  // desc
+  [brick],  // [items]
   [],  // [entities]
   { to: undefined, minPass: true, visible: true, blocked: false }, // N
   { to: 10, minPass: false, visible: true, blocked: false }, // NE
@@ -70,7 +85,7 @@ newRoom = new Room(
   { to: undefined, minPass: true, visible: true, blocked: false }, // IN
   { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
   [], // action script
-  [] // features
+  [bust] // features
 );
 room.push(newRoom);
 
@@ -104,9 +119,9 @@ newRoom = new Room(
   [],  // [items]
   [],  // [entities]
   { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
+  { to: 7, minPass: true, visible: true, blocked: false }, // NE
   { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: 7, minPass: true, visible: true, blocked: false }, // SE
+  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
   { to: undefined, minPass: true, visible: true, blocked: false }, // S
   { to: undefined, minPass: true, visible: true, blocked: false }, // SW
   { to: 5, minPass: true, visible: true, blocked: false }, // W
@@ -177,7 +192,7 @@ newRoom = new Room(
   { to: 9, minPass: false, visible: true, blocked: false }, // E
   { to: undefined, minPass: true, visible: true, blocked: false }, // SE
   { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
+  { to: 4, minPass: true, visible: true, blocked: false }, // SW
   { to: 6, minPass: true, visible: true, blocked: false }, // W
   { to: undefined, minPass: true, visible: true, blocked: false }, // NW
   { to: undefined, minPass: true, visible: true, blocked: false }, // UP
@@ -243,7 +258,7 @@ newRoom = new Room(
   [],  // [entities]
   { to: 9, minPass: true, visible: true, blocked: false }, // N
   { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 1, minPass: true, visible: true, blocked: false }, // E
+  { to: 11, minPass: true, visible: true, blocked: false }, // E
   { to: undefined, minPass: true, visible: true, blocked: false }, // SE
   { to: undefined, minPass: true, visible: true, blocked: false }, // S
   { to: 2, minPass: false, visible: true, blocked: false }, // SW
@@ -280,7 +295,6 @@ newRoom = new Room(
   [] // features
 );
 room.push(newRoom);
-
 
 module.exports = room;
 
