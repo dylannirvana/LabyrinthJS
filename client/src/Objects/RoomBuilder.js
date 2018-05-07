@@ -63,7 +63,7 @@ let brick = new Item(
 let bust = new Item(
   2,
   "bust",
-  "A roughly-carved sculpture of an unknown gentleman. The unusually flat cranium does not contribute to any airs of wisdom. It once bore a name carved beneath the visage, but it has been scratched out.",
+  "A roughly-carved sculpture of an unknown gentleman. The unusually flat cranium does not assist any pretense of wisdom. There was once a name carved beneath the visage, but it has been scratched out.",
   ["bust", "sculpture", "head"]
 )
 newRoom = new Room(
@@ -89,11 +89,20 @@ newRoom = new Room(
 );
 room.push(newRoom);
 
+let sword = new Item(
+  3, 
+  "rusty sword",
+  "This once-noble weapon was clearly the armament of a mighty warrior, but has since been laid low by the elements. It still has some heft to it, though. (And, you notice, the words 'Made in Pakistan' stamped on the pommel.",
+  ["sword", "rusty"],
+  10,
+  "wielded",
+  10
+)
 newRoom = new Room(
   3,  // location
   "Room Three", // name
   "This is Room 3.",  // desc
-  [],  // [items]
+  [sword],  // [items]
   [],  // [entities]
   { to: undefined, minPass: true, visible: true, blocked: false }, // N
   { to: undefined, minPass: true, visible: true, blocked: false }, // NE

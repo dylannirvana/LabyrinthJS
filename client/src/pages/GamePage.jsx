@@ -215,28 +215,12 @@ class GamePage extends React.Component {
     !response ? this.echo(["SYSTEM: Command not defined. - at itemAction(), words = '"+words.join(", ")]) : response(); 
   }
 
-  takeItem(word) {
-    let item = undefined;
-    if (!item) {
-      room[this.state.game.player.location].inventory.forEach((ele, i) => {
-        if (ele.keywords.includes(word)) {
-          item = room[this.state.game.player.location].inventory.splice(i, 1);
-        }
-      })
-    };
-    if (!item) {
-      this.state.game.player.inventory.forEach((ele) => {
-        if (ele.keywords.includes(word)) {
-          item = "self";
-        }
-      })
-    }
-    if (!item) {this.echo(["You don't see that here."])}
-    else if (item === "self") {this.echo(["You already have that!"])}
-    else if (item) {
-      if (item.invSize === 0) {this.echo[("You can't take that.")]}
-      else {
-        let inv = this.state.game.player.inventory.concat(item);
+  takeItem(word) {    
+    if (word === "all" || word === "everything") {
+      if (room[this.state.game.player.location].inventory) {
+        let items = room[this.state.game.player.location].inventory.concat();
+        room[this.state.game.player.location].inventory = [];
+        let inv = this.state.game.player.inventory.concat(items);
         this.setState(prevState => ({
           game: {
             ...prevState.game,
@@ -246,37 +230,94 @@ class GamePage extends React.Component {
             }
           }
         }))
-        this.echo(["You pick up the "+item[0].shortName+"."])
+        this.echo(["You pick up everything that's not nailed down."]);
+      } else this.echo(["You don't see anything you can take."]);
+    } else {
+      let response = undefined;
+      if (!response) {
+        room[this.state.game.player.location].inventory.forEach((ele, i) => {
+          console.log("checking room inventory", ele);
+          if (ele.keywords.includes(word)) {
+            response = room[this.state.game.player.location].inventory.splice(i, 1);
+          }
+        })
+      };
+      if (!response) {
+        console.log("features check")
+        room[this.state.game.player.location].features.forEach((ele) => {
+          console.log("checking room feature", ele.keywords);
+          if (ele.keywords.includes(word)) {
+            response = "You can't take that.";
+          }
+        })
+      };
+      if (!response) {
+        this.state.game.player.inventory.forEach((ele) => {
+          if (ele.keywords.includes(word)) {
+            response = "You already have that!";
+          }
+        })
       }
+      if (!response) {this.echo(["You don't see that here."])}
+      if (typeof response === "string") {this.echo([response])}
+      else if (response) {
+        let inv = this.state.game.player.inventory.concat(response);
+        this.setState(prevState => ({
+          game: {
+            ...prevState.game,
+            player: {
+                ...prevState.game.player,
+                inventory: inv
+            }
+          }
+        }))
+        this.echo(["You pick up the "+response[0].shortName+"."])
+      } else this.echo(["SYSTEM: takeItem() failed: word =", word]);
     }
   }
 
   dropItem(word) {
-    let item = undefined;
-    console.log("player inv =", this.state.game.player.inventory);
-    this.state.game.player.inventory.forEach((ele, i) => {
-      console.log("ele keywords =", ele.keywords);
-      if (ele.keywords.includes(word)) {
-        console.log("true");
-        item = this.state.game.player.inventory[i];
-        console.log("item =", item);
-      }
-    });
-    if (!item) {this.echo(["You don't have that."])}
-    else {
-      let inv = this.state.game.player.inventory.concat();
-      item = inv.splice(item, 1);
-      room[this.state.game.player.location].inventory.push(item[0]);
-      this.setState(prevState => ({
-        game: {
-          ...prevState.game,
-          player: {
-             ...prevState.game.player,
-             inventory: inv
+    if (word === "all" || word === "everything") {
+      if (this.state.game.player.inventory.length) {
+        this.state.game.player.inventory.forEach(ele => room[this.state.game.player.location].inventory.push(ele));
+        this.setState(prevState => ({
+          game: {
+            ...prevState.game,
+            player: {
+              ...prevState.game.player,
+              inventory: []
+            }
           }
+        }))
+        this.echo(["You drop everything you're carrying."]);
+      } else this.echo(["You aren't carrying anything."]);
+    } else {
+      let item = undefined;
+      console.log("player inv =", this.state.game.player.inventory);
+      this.state.game.player.inventory.forEach((ele, i) => {
+        console.log("ele keywords =", ele.keywords);
+        if (ele.keywords.includes(word)) {
+          console.log("true");
+          item = this.state.game.player.inventory[i];
+          console.log("item =", item);
         }
-      }))
-      this.echo(["You drop the "+item[0].shortName+"."])
+      });
+      if (!item) {this.echo(["You don't have that."])}
+      else {
+        let inv = this.state.game.player.inventory.concat();
+        item = inv.splice(item, 1);
+        room[this.state.game.player.location].inventory.push(item[0]);
+        this.setState(prevState => ({
+          game: {
+            ...prevState.game,
+            player: {
+              ...prevState.game.player,
+              inventory: inv
+            }
+          }
+        }))
+        this.echo(["You drop the "+item[0].shortName+"."])
+      }
     }
   }
 
@@ -435,6 +476,7 @@ class GamePage extends React.Component {
           items+="a "+ele.shortName;
         } else 
         if (i > 0 && i === room[currLoc].inventory.length - 1) {
+          if (room[currLoc].inventory.length !== 2) items+=",";
           items+=" and a "+ele.shortName;
         } else {
           items+=", a "+ele.shortName;
