@@ -9,7 +9,11 @@
   - bind method?
 - Needs to incorporate turn-based timing for scripts
   - perhaps a function firing after a command has been issued, after interactions have been handled, iterating over all active entities
-- How to place buttons that affect state
+- User Authentication
+  - where login/logout buttons need to be placed
+  - proper info passing into Dashboard
+  - load game button rendering (moot until game save functionality is in place)
+
 
 # Objects
   - Started with some constructor modules
@@ -17,11 +21,9 @@
 
 # Unimplemented
 - command parser
-- room builds
 - entity builds
   - action scripts
-- styling
-- User Authentication for save states
+- save states
 - dev testing to track entities
 
 # Tech to explore
@@ -31,7 +33,6 @@
   - touch entity to interact
 
 # don't forget
-- favicon.ico
 
 # Gameplay timeline
 - introduction text

@@ -1,5 +1,4 @@
 import React from "react";
-import "./About.css";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 const About = (props) => (

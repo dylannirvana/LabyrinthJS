@@ -6,7 +6,8 @@ import API from '../utils/API';
 class DashboardPage extends React.Component {
   state = {
     secretData: '',
-    user: {}
+    user: {},
+    savedGames: []
   }
 
   /**
@@ -22,13 +23,24 @@ class DashboardPage extends React.Component {
     })
   }
 
+  // displaySavedGames = () => {
+  //   {this.state.savedGames.length ? (
+  //     this.state.savedGames.map(ele => (
+  //       <button className="gameButton smButton" onClick={() => this.handleLoadGame(this.state.user)}>Load Game</button>
+  //     ))
+  //   ) : (
+  //     <p>You have no saved games.</p>
+  //   )}
+  // };
+  
   /**
    * Render the component.
    */
   render() {
-    return (<Dashboard secretData={this.state.secretData} user={this.state.user} />);
+    return (
+      <Dashboard secretData={this.state.secretData} user={this.state.user} />
+    )
   }
-
 }
 
 export default DashboardPage;

@@ -1,13 +1,13 @@
 // Room Constructor
 function Room(
   // arguments here
-  location, name, desc, items, entities, N, NE, E, SE, S, SW, W, NW, UP, DOWN, IN, OUT, script, features
+  location, name, desc, inventory, entities, N, NE, E, SE, S, SW, W, NW, UP, DOWN, IN, OUT, script, features
   ) {
   // properties here
   this.location = location;
   this.name = name;
   this.desc = desc;
-  this.items = items;
+  this.inventory = inventory;
   this.entities = entities;
   this.n = N;
   this.ne = NE;

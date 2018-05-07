@@ -1,3 +1,7 @@
+body {
+  padding: 0 !important;
+}
+
 .modal-content {
   color: rgb(129, 224, 248);
   background: rgb(37, 37, 37);

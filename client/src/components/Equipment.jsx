@@ -1,5 +1,4 @@
 import React from "react";
-import "./Equipment.css";
 
 const Equipment = props => (
   <div id="equipment">
