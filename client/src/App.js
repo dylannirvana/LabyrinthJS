@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 
 import GamePage from './pages/GamePage.jsx';
-import HomePage from './pages/GamePage.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 import { 
   PrivateRoute, 
@@ -131,20 +131,22 @@ class App extends Component {
                   <Link to="/signup">Sign up</Link>
                 </div>
               )}
-              <PropsRoute exact path="/game" component={GamePage} 
-                toggleAuthenticateStatus={this.toggleAuthenticateStatus}
-                handleQuitButton={this.handleQuitButton.bind(this)}
-                handleLoginButton={this.handleLoginButton} 
-                loadData={this.loadData} />
               <PropsRoute exact path="/" component={HomePage}
+                authenticated={this.state.authenticated}
                 toggleAuthenticateStatus={this.toggleAuthenticateStatus.bind()}
-                handlenewGameButton={this.handleNewGameButton} 
+                handleNewGameButton={this.handleNewGameButton} 
                 handleLoadGame={this.handleLoadGame.bind(this)}
                 handleLoginButton={this.handleLoginButton.bind(this)} 
                 handleLogoutButton={this.handleLogoutButton} />
-              <PrivateRoute path="/dashboard" component={DashboardPage}/>
-              <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} />
-              <LoggedOutRoute path="/signup" component={SignUpPage}/>
+              <PropsRoute exact path="/game" component={GamePage} 
+                toggleAuthenticateStatus={this.toggleAuthenticateStatus.bind()}
+                handleQuitButton={this.handleQuitButton.bind(this)}
+                handleLoginButton={this.handleLoginButton} 
+                authenticated={this.state.authenticated} 
+                loadData={this.loadData} />
+              {/* <PrivateRoute path="/dashboard" component={DashboardPage}/> */}
+              {/* <LoggedOutRoute path="/login" component={LoginPage} toggleAuthenticateStatus={this.toggleAuthenticateStatus} /> */}
+              {/* <LoggedOutRoute path="/signup" component={SignUpPage}/> */}
               <Route path="/logout" component={LogoutFunction}/>
             </div>
           </Router>

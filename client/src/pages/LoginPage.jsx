@@ -25,6 +25,13 @@ class LoginPage extends React.Component {
     }
     this.setState({ successMessage });
   }
+  
+  componentWillUnmount(){
+    this.setState({
+      errors: {}
+    });
+  }
+
   /**
    * Process the form.
    *
@@ -47,10 +54,7 @@ class LoginPage extends React.Component {
         this.props.toggleAuthenticateStatus()
 
         // redirect signed in user to dashboard
-        this.props.history.push('/dashboard');
-        this.setState({
-          errors: {}
-        });
+        this.props.history.push('/');
     }).catch(( {response} ) => {
 
         const errors = response.data.errors ? response.data.errors : {};
