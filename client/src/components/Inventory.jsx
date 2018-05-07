@@ -7,10 +7,10 @@ const showInventory = (inv) => {
     )
   } else {
     return (
-      inv.inventory.map((item) => {
+      inv.map((item, i) => {
         if (item.quantity === undefined) {
           return (
-            <p>{item.shortName}</p>
+            <p key={i}>{item.shortName}</p>
           )
         } else {
           return (
