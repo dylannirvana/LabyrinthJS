@@ -11,7 +11,7 @@ const Item = require("./ItemConstructor.js");
 let cellPhone = new Item(
   0,  // itemId
   "cell phone",  // shortName
-  "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Chauffr ride.",  // longDesc
+  "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Chauffr ride.",  // lookDesc
   ["cell", "phone", "noxia", "grunt", "cellphone"], // keywords
   1,  // invSize
   false, // wear

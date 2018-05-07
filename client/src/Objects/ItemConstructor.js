@@ -2,12 +2,12 @@
 
 function Item(
   // arguments here
-  itemId, shortName, longDesc, keywords, invSize, wear, value, thrown
+  itemId, shortName, lookDesc, keywords, invSize, wear, value, thrown
   ) {
   // properties here
   this.itemId = itemId; // itemId
   this.shortName = shortName; // short name
-  this.longDesc = longDesc; // long description
+  this.lookDesc = lookDesc; // long description
   this.keywords = keywords; // synonyms and keywords
   this.invSize = invSize;  // undefined = not takeable
   this.wear = wear; // location as string

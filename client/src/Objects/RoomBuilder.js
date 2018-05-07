@@ -1,5 +1,6 @@
 const Room = require("./RoomConstructor.js");
 const Item = require("./ItemConstructor.js");
+const Creature = require("./CreatureConstructor.js");
 
 const room = [];
 

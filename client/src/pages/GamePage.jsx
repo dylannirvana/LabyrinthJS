@@ -9,6 +9,7 @@ import Equipment from "../components/Equipment.jsx";
 import Statistics from "../components/Statistics.jsx";
 import { Input } from "../components/Form";
 var Item = require("../Objects/ItemBuilder");
+var Creature = require("../Objects/CreatureBuilder");
 // var Room = require("../Objects/RoomBuilder");
 // import room from "../Objects/RoomBuilder";
 
@@ -64,7 +65,7 @@ let gameData = {
       verbose: true,
     }
   },
-  entities: [],
+  creatures: [Creature.cat],
   textBuffer: []
 };
 
@@ -135,6 +136,9 @@ class GamePage extends React.Component {
         textBuffer: arr
       }
     }));
+    this.state.game.creatures.forEach(ele => {
+      console.log("creature =", ele);
+    })
     updateScroll();
   }
 
@@ -258,6 +262,15 @@ class GamePage extends React.Component {
           }
         })
       }
+      if (!response) {
+        this.state.game.creatures.forEach((ele) => {
+          if (ele.location === this.state.game.player.location) {
+            if (ele.keywords.includes(word)) {
+              response = "I don't think they would like that.";
+            }
+          }
+        })
+      }
       if (!response) {this.echo(["You don't see that here."])}
       if (typeof response === "string") {this.echo([response])}
       else if (response) {
@@ -337,39 +350,63 @@ class GamePage extends React.Component {
   examine(words) {
     console.log("examine() firing, words = "+words.join(", "));
     let response = undefined;
-    if (words.length === 1) {
+    if (words.length === 1 || words[1] === "room" || words[1] === "around") {
       response = () => this.describeRoom(this.state.game.player.location);
     }
+    // check if player is a narcissist
     if (!response) {
       if (words[1] === "me" || words[1] === "myself") {
         response = () => {this.echo(["You fine specimen, you."]); if (isMobile) this.viewCharacterToggle()} 
       }
     }
+    // check player inventory if object not yet found
     if (!response) {
       this.state.game.player.inventory.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.longDesc]);
+          response = () => this.echo([ele.lookDesc]);
         }
       })
     }
+    // check room inventory if object not yet found
     if (!response) {
       room[this.state.game.player.location].inventory.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.longDesc]);
+          response = () => this.echo([ele.lookDesc]);
         }
       })
     }
+    // check room features if object not yet found
     if (!response) {
       room[this.state.game.player.location].features.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.longDesc]);
+          response = () => this.echo([ele.lookDesc]);
         }
       });
     }
+    // check present creatures if object not yet found
+    if (!response) {
+      this.state.game.creatures.forEach(ele => {
+        if (ele.location === this.state.game.player.location) {
+          if (ele.keywords.includes(words[1])) {
+            response = () => this.echo([ele.lookDesc]);
+          }
+        }
+      })
+    }
+    // check present creature features if object not yet found
+    if (!response) {
+      this.state.game.creatures.forEach(ele => {
+        if (ele.location === this.state.game.player.location) {
+          if (ele.features[words[1]]) {
+            response = () => this.echo([ele.features[words[1]]]);
+          }
+        }
+      })
+    }
     // insert entity inventory check
     if (!response) {
-      console.log("Tried to examine something and didn't find it.")
-      response = () => this.echo(["You don't see that here."])
+      console.log("Tried to examine something and didn't find it.");
+      this.echo(["You don't see that here."]);
     } else response();
   }
 
@@ -464,10 +501,23 @@ class GamePage extends React.Component {
     }
   };
 
+  // echo description of room and any present items, creatures, and exits
   describeRoom(currLoc) {
     let relay = [];
+    // add room name to echo relay
     relay.push(room[currLoc].name);
+    // add room description to echo relay
     relay.push(room[currLoc].desc);
+    // add creatures present to echo relay
+    this.state.game.creatures.forEach((ele, i) => {
+      if (ele.location === this.state.game.player.location) {
+        let thisCreature="There is a ";
+        thisCreature+=ele.shortName;
+        thisCreature+=ele.doing;
+        relay.push(thisCreature);
+      }
+    })
+    // add room inventory contents to echo relay
     if (room[currLoc].inventory.length !== 0) {
       let items = ["You see "];
       console.log("room inv.length =", room[currLoc].inventory.length);
@@ -486,6 +536,7 @@ class GamePage extends React.Component {
       relay.push(items);
     }
     console.log("@ describeRoom() current room object = ", room[currLoc]);
+    // add exits to echo relay
     let exits =[];
     if (room[currLoc].n.to && room[currLoc].n.visible) {exits.push("north")};
     if (room[currLoc].ne.to && room[currLoc].ne.visible) {exits.push("northeast")};
@@ -500,6 +551,7 @@ class GamePage extends React.Component {
     if (room[currLoc].in.to && room[currLoc].in.visible) {exits.push("in")};
     if (room[currLoc].out.to && room[currLoc].out.visible) {exits.push("out")};
     relay.push("Exits: "+exits.join(", "));
+    // echo 
     this.echo(relay);
   }
   
