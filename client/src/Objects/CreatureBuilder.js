@@ -1,4 +1,4 @@
-const Item = require("./ItemConstructor.js");
+// const Item = require("./ItemConstructor.js");
 const Creature = require("./CreatureConstructor.js");
 
 let cat = new Creature(

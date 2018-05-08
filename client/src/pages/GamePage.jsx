@@ -23,7 +23,7 @@ const uselessWords = [
 
 
 const generalCommands = [
-  "look", "l", "wait", "z", "exa", "examine"
+  "look", "l", "wait", "z", "rest", "wait", "exa", "examine"
 ];
 
 const itemCommands = [
@@ -46,6 +46,7 @@ const updateScroll = () => {
 let isMobile = window.innerWidth < 768 ? true : false;
 
 let gameData = {
+  moveCount: 0,
   player: {
     location: 2,
     equipment: {
@@ -93,52 +94,36 @@ class GamePage extends React.Component {
     viewAbout: false,
     viewHelp: false,
     isMobile: isMobile,
-    // move below into newGameState
     game: gameData
-
-    // }
-    // player: {
-    //   location: 0,
-    //   equipment: {
-    //     wielded: "nothing",
-    //     head: "nothing",
-    //     body: "nothing",
-    //     arms: "nothing",
-    //     legs: "nothing"
-    //   },
-    //   inventory: [],
-    //   stats: {
-    //     health: 100,
-    //     attack: 0,
-    //     defense: 3
-    //   },
-    //   options: {
-    //     verbose: true,
-    //   }
-    // },
-    // entities: [],
-    // textBuffer: []
-    // move above into newGameState
   }
 
-  echo = (relay, userCommand) => {
+  echo = (relay, noTime, command) => {
     let arr = this.state.game.textBuffer.concat();
     relay.forEach(ele => {
-      if (userCommand) ele="> "+ele;
+      if (command === true) ele="> "+ele;
       // keep textBuffer limited to 100 items
       if (arr.length > 100) arr.splice(0, 1);
       arr.push(ele);       
     });
+    // advance turn here if calling echo is not marked "noTime"
+    let moveCount = this.state.game.moveCount;
+    console.log("this.state.game.creatures =", this.state.game.creatures);
+    let creatures = this.state.game.creatures.slice();
+    if (!noTime) {
+      console.log("turn advancing");
+      moveCount++;
+      creatures = this.advanceTurn(creatures);
+    }
+    // set new textBuffer in state
     this.setState(prevState => ({
       userCommand: "",
       game: {
         ...prevState.game,
-        textBuffer: arr
+        moveCount: moveCount,
+        textBuffer: arr,
+        creatures: creatures
       }
     }));
-    this.state.game.creatures.forEach(ele => {
-      console.log("creature =", ele);
-    })
     updateScroll();
   }
 
@@ -158,7 +143,7 @@ class GamePage extends React.Component {
     if (this.state.userCommand) {
       let thisCommand = this.state.userCommand;
       // echo command
-      await this.echo([this.state.userCommand], true)
+      await this.echo([this.state.userCommand], "noTime", true);
       // start command processing and turn action here
       this.parseCommand(thisCommand);
       // assure roomDesc window is scrolled to bottom
@@ -169,18 +154,17 @@ class GamePage extends React.Component {
   // parse command
   parseCommand = (commandInput) => {
     const commandWords = commandInput.trim().toLowerCase().split(" ", 8);
-    if (commandWords.length === 8) this.echo(["Warning - this game is pretty dumb, and will only accept sentences of up to 8 words. It probably won't even use all eight. Look out for Version 2, coming soon!"]);
+    if (commandWords.length === 8) this.echo(["Warning - this game is pretty dumb, and will only accept sentences of up to 8 words. It probably won't even use all eight. Look out for Version 2, coming soon!"], "noTime");
     // trim unnecessary words
     let command = [];
     // if (command[0] !== "g" || command[0] !== "again") {async (commandInput) => {await this.setState({ lastCommand: commandInput })}};
     commandWords.forEach(ele => {if (!uselessWords.includes(ele)) command.push(ele)});
-    console.log("commandWords =", command);
     //check for move command
     if (moveCommands.indexOf(command[0]) !== -1) {this.movePlayer(command)}
     else if (specialCommands.indexOf(command[0]) !== -1) {this.specialAction(command)}
     else if (itemCommands.indexOf(command[0]) !== -1) {this.itemAction(command)}
     else if (generalCommands.indexOf(command[0]) !== -1) {this.generalAction(command)}
-    else {this.echo(["SYSTEM: Unknown command. - in parseCommand(), command =", command.join(", ")])};
+    else {this.echo(["SYSTEM: Unknown command. - in parseCommand(), command =", command.join(", ")], "noTime"); console.log("parseCommand() error")};
   }
 
   // *
@@ -194,11 +178,14 @@ class GamePage extends React.Component {
         if (this.state.lastCommand) {
           response = () => this.parseCommand(this.state.lastCommand)
         } else {
-          response = () => this.echo(["What do you want to do again?"])
+          response = () => this.echo(["What do you want to do again?"], "noTime")
         }; break;
       default : response = undefined
     }
-    !response ? this.echo(["SYSTEM: Command not defined. - at specialAction(), words = '"+words.join(", ")]) : response(); 
+    if (!response) {
+      this.echo(["SYSTEM: Command not defined. - at specialAction(), words = '"+words.join(", ")], "noTime");
+      console.log("Command not defined at specialAction()")
+    } else response(); 
   }
 
   // *
@@ -216,7 +203,10 @@ class GamePage extends React.Component {
       }
       default : response = undefined
     }
-    !response ? this.echo(["SYSTEM: Command not defined. - at itemAction(), words = '"+words.join(", ")]) : response(); 
+    if (!response) {
+      this.echo(["SYSTEM: Command not defined. - at itemAction(), words = '"+words.join(", ")], "noTime");
+      console.log("Command not defined at itemAction()");
+    } else response(); 
   }
 
   takeItem(word) {    
@@ -235,7 +225,7 @@ class GamePage extends React.Component {
           }
         }))
         this.echo(["You pick up everything that's not nailed down."]);
-      } else this.echo(["You don't see anything you can take."]);
+      } else this.echo(["You don't see anything you can take."], "noTime");
     } else {
       let response = undefined;
       if (!response) {
@@ -271,8 +261,8 @@ class GamePage extends React.Component {
           }
         })
       }
-      if (!response) {this.echo(["You don't see that here."])}
-      if (typeof response === "string") {this.echo([response])}
+      if (!response) {this.echo(["You don't see that here."], "noTime")}
+      if (typeof response === "string") {this.echo([response], "noTime")}
       else if (response) {
         let inv = this.state.game.player.inventory.concat(response);
         this.setState(prevState => ({
@@ -285,7 +275,10 @@ class GamePage extends React.Component {
           }
         }))
         this.echo(["You pick up the "+response[0].shortName+"."])
-      } else this.echo(["SYSTEM: takeItem() failed: word =", word]);
+      } else {
+        this.echo(["SYSTEM: takeItem() failed: word =", word], "noTime");
+        console.log("takeItem failed");
+      }
     }
   }
 
@@ -303,7 +296,7 @@ class GamePage extends React.Component {
           }
         }))
         this.echo(["You drop everything you're carrying."]);
-      } else this.echo(["You aren't carrying anything."]);
+      } else this.echo(["You aren't carrying anything."], "noTime");
     } else {
       let item = undefined;
       console.log("player inv =", this.state.game.player.inventory);
@@ -315,7 +308,7 @@ class GamePage extends React.Component {
           console.log("item =", item);
         }
       });
-      if (!item) {this.echo(["You don't have that."])}
+      if (!item) {this.echo(["You don't have that."], "noTime")}
       else {
         let inv = this.state.game.player.inventory.concat();
         item = inv.splice(item, 1);
@@ -342,7 +335,9 @@ class GamePage extends React.Component {
     switch (words[0]) {
       case "l" : case "look" : case "exa" : case "examine" :
         this.examine(words); break;
-      default : this.echo(["SYSTEM: Command not defined. - at generalAction(), words = "+words.join(", ")])
+      case "z" : case "rest" : case "wait" :
+        this.echo(["You chill for a minute. It's been a tough day, and you've earned it."]); break;
+      default : this.echo(["SYSTEM: Command not defined. - at generalAction(), words = "+words.join(", ")], "noTime"); console.log("Command not defined at generalAction()");
     }
   }
   
@@ -356,14 +351,14 @@ class GamePage extends React.Component {
     // check if player is a narcissist
     if (!response) {
       if (words[1] === "me" || words[1] === "myself") {
-        response = () => {this.echo(["You fine specimen, you."]); if (isMobile) this.viewCharacterToggle()} 
+        response = () => {this.echo(["You fine specimen, you."], "noTime"); if (isMobile) this.viewCharacterToggle()} 
       }
     }
     // check player inventory if object not yet found
     if (!response) {
       this.state.game.player.inventory.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.lookDesc]);
+          response = () => this.echo([ele.lookDesc], "noTime");
         }
       })
     }
@@ -371,7 +366,7 @@ class GamePage extends React.Component {
     if (!response) {
       room[this.state.game.player.location].inventory.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.lookDesc]);
+          response = () => this.echo([ele.lookDesc], "noTime");
         }
       })
     }
@@ -379,7 +374,7 @@ class GamePage extends React.Component {
     if (!response) {
       room[this.state.game.player.location].features.forEach((ele, i) => {
         if (ele.keywords.includes(words[1])) {
-          response = () => this.echo([ele.lookDesc]);
+          response = () => this.echo([ele.lookDesc], "noTime");
         }
       });
     }
@@ -388,7 +383,7 @@ class GamePage extends React.Component {
       this.state.game.creatures.forEach(ele => {
         if (ele.location === this.state.game.player.location) {
           if (ele.keywords.includes(words[1])) {
-            response = () => this.echo([ele.lookDesc]);
+            response = () => this.echo([ele.lookDesc], "noTime");
           }
         }
       })
@@ -398,7 +393,7 @@ class GamePage extends React.Component {
       this.state.game.creatures.forEach(ele => {
         if (ele.location === this.state.game.player.location) {
           if (ele.features[words[1]]) {
-            response = () => this.echo([ele.features[words[1]]]);
+            response = () => this.echo([ele.features[words[1]], "noTime"]);
           }
         }
       })
@@ -406,7 +401,7 @@ class GamePage extends React.Component {
     // insert entity inventory check
     if (!response) {
       console.log("Tried to examine something and didn't find it.");
-      this.echo(["You don't see that here."]);
+      this.echo(["You don't see that here."], "noTime");
     } else response();
   }
 
@@ -485,7 +480,8 @@ class GamePage extends React.Component {
           room[currLoc].out.blocked ? newLoc = blocked : newLoc = room[currLoc].out.to;
         } else { newLoc = nope }
         break;
-      default : newLoc = "SYSTEM: Movement not defined. - at movePlayer(), words[0] = '"+words[0]+"'"
+      default : newLoc = "SYSTEM: Movement not defined. - at movePlayer(), words[0] = '"+words[0]+"'";
+        console.log("Movement not defined at movePlayer()");
     }
     if (typeof newLoc !== "number") { this.echo([newLoc]) } else {
       this.setState(prevState => ({
@@ -520,7 +516,6 @@ class GamePage extends React.Component {
     // add room inventory contents to echo relay
     if (room[currLoc].inventory.length !== 0) {
       let items = ["You see "];
-      console.log("room inv.length =", room[currLoc].inventory.length);
       room[currLoc].inventory.forEach((ele, i) => {
         if (i === 0) {
           items+="a "+ele.shortName;
@@ -535,7 +530,7 @@ class GamePage extends React.Component {
       items+=" here.";
       relay.push(items);
     }
-    console.log("@ describeRoom() current room object = ", room[currLoc]);
+    // console.log("@ describeRoom() current room object = ", room[currLoc]);
     // add exits to echo relay
     let exits =[];
     if (room[currLoc].n.to && room[currLoc].n.visible) {exits.push("north")};
@@ -552,7 +547,64 @@ class GamePage extends React.Component {
     if (room[currLoc].out.to && room[currLoc].out.visible) {exits.push("out")};
     relay.push("Exits: "+exits.join(", "));
     // echo 
-    this.echo(relay);
+    this.echo(relay, "noTime");
+  }
+
+  // *
+  // * Turn handling for Creatures
+  // *
+
+  advanceTurn(creatures) {
+    creatures.forEach((ele, i) => {
+      // check if there is an action queued in Creature's script array
+      let creatureIndex = i;
+      let thisCreature = ele.shortName;
+      if (ele.script.length) {
+        console.log(thisCreature+"'s location before move = "+ele.location);
+        // console.log("room =", room[ele.location]);
+        switch (ele.script[0]) {
+          case "moveRandom" : 
+            let exits = [];
+            let thisRoom = room[ele.location];
+            if (thisRoom.n.to && thisRoom.n.visible && !thisRoom.n.blocked && ((thisCreature !== "Minotaur" || thisRoom.n.minPass))) {exits.push(thisRoom.n.to)};
+            if (thisRoom.ne.to && thisRoom.ne.visible && !thisRoom.ne.blocked && ((thisCreature !== "Minotaur" || thisRoom.ne.minPass))) {exits.push(thisRoom.ne.to)};
+            if (thisRoom.e.to && thisRoom.e.visible && !thisRoom.e.blocked && (thisCreature !== "Minotaur" || thisRoom.e.minPass)) {exits.push(thisRoom.e.to)};
+            if (thisRoom.se.to && thisRoom.se.visible && !thisRoom.se.blocked && ((thisCreature !== "Minotaur" || thisRoom.se.minPass))) {exits.push(thisRoom.se.to)};
+            if (thisRoom.s.to && thisRoom.s.visible && !thisRoom.s.blocked && ((thisCreature !== "Minotaur" || thisRoom.s.minPass))) {exits.push(thisRoom.s.to)};
+            if (thisRoom.sw.to && thisRoom.sw.visible && !thisRoom.sw.blocked && ((thisCreature !== "Minotaur" || thisRoom.sw.minPass))) {exits.push(thisRoom.sw.to)};
+            if (thisRoom.w.to && thisRoom.w.visible && !thisRoom.w.blocked && ((thisCreature !== "Minotaur" || thisRoom.w.minPass))) {exits.push(thisRoom.w.to)};
+            if (thisRoom.nw.to && thisRoom.nw.visible && !thisRoom.nw.blocked && ((thisCreature !== "Minotaur" || thisRoom.nw.minPass))) {exits.push(thisRoom.nw.to)};
+            if (thisRoom.up.to && thisRoom.up.visible && !thisRoom.up.blocked && ((thisCreature !== "Minotaur" || thisRoom.up.minPass))) {exits.push(thisRoom.up.to)};
+            if (thisRoom.down.to && thisRoom.down.visible && !thisRoom.down.blocked && ((thisCreature !== "Minotaur" || thisRoom.down.minPass))) {exits.push(thisRoom.down.to)};
+            if (thisRoom.in.to && thisRoom.in.visible && !thisRoom.in.blocked && ((thisCreature !== "Minotaur" || thisRoom.in.minPass))) {exits.push(thisRoom.in.to)};
+            if (thisRoom.out.to && thisRoom.out.visible && !thisRoom.out.blocked && ((thisCreature !== "Minotaur" || thisRoom.out.minPass))) {exits.push(thisRoom.out.to)};
+            let roll = Math.floor(Math.random() * Math.floor(100));
+            console.log("exits =", exits);
+            if (roll <= 20) {
+              console.log("staying put, roll =", roll);
+              // creature stays put
+            } else {
+              for (let i = 0 ; i < exits.length; i++) {
+                if (roll <= 20 + (i+1) * (80 / exits.length)) {
+                  console.log(thisCreature+"'s location after move = "+exits[i]+" ; roll = ", roll);
+                  this.echo(["The creature walks to another room."], "noTime");
+                  creatures[creatureIndex].location = exits[i];
+                  break;
+                }
+              }
+            }
+            break;
+          case "chase" :
+            break;
+          case "search" :
+            break;
+          case "blinded" :
+            break;
+          default: this.echo(["advanceTurn() defaulted"], "noTime"); console.log("advanceTurn() defaulted");
+        }
+      }
+    })
+    return creatures;
   }
   
   // *
@@ -602,6 +654,7 @@ class GamePage extends React.Component {
         <Help 
           viewHelp={this.state.viewHelp} viewHelpToggle={this.viewHelpToggle.bind(this)}/>
         <Game 
+          moveCount={this.state.game.moveCount}
           player={this.state.game.player} 
           entities={this.state.game.entities} 
           textBuffer={this.state.game.textBuffer} 

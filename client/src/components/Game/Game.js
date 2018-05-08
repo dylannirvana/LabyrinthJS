@@ -35,7 +35,7 @@ const Game = props => (
       <Col md={{size: 3, order: 3}} className="d-none d-md-block" id="playerArea">
         <Inventory inventory={props.player.inventory}/>
         <Equipment equipment={props.player.equipment}/>
-        <Statistics stats={props.player.stats}/>
+        <Statistics stats={props.player.stats} moveCount={props.moveCount}/>
       </Col>
     </Row>
   </Container >

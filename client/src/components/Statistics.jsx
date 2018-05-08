@@ -26,6 +26,7 @@ const Statistics = props => (
     <p>Health: {showHealth(props.stats.health)}</p>
     <p>Attack: {props.stats.attack}</p>
     <p>Defense: {props.stats.defense}</p>
+    <p>Moves taken: {props.moveCount}</p>
   </div>
 );
 

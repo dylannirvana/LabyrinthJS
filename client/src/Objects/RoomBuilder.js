@@ -1,6 +1,6 @@
 const Room = require("./RoomConstructor.js");
 const Item = require("./ItemConstructor.js");
-const Creature = require("./CreatureConstructor.js");
+// const Creature = require("./CreatureConstructor.js");
 
 const room = [];
 
@@ -70,7 +70,7 @@ let bust = new Item(
 newRoom = new Room(
   2,  // location
   "Room Two", // name
-  "This is Room 2. There is a carved bust on a pedestal in the corner of the room.",  // desc
+  "This is Room 2. A carved bust sits atop a pedestal in the corner of the room.",  // desc
   [brick],  // [items]
   [],  // [entities]
   { to: undefined, minPass: true, visible: true, blocked: false }, // N
