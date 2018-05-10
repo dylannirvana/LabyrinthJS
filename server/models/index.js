@@ -12,7 +12,7 @@ module.exports.connect = (uri) => {
   });
 
   // load models
-  require("./user");
+  require("./User");
 
   // SaveState: require("./SaveState"),
 
