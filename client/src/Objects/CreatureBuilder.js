@@ -1,4 +1,3 @@
-const Item = require("./ItemBuilder");
 
 function Creature(
   location, shortName, lookDesc, keywords, health, attack, defense, script, attitude, doing

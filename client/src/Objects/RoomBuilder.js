@@ -1,4 +1,3 @@
-const Item = require("./ItemBuilder");
 
 // Rooms
 function Room(
@@ -109,13 +108,10 @@ thisRoom = new Room(
   "Room One",
   "This is Room 1."
 );
-thisRoom = {
-  ...thisRoom,
-  exits: {
-    ...thisRoom.exits,
-    northeast: { ...thisRoom.exits.northeast, to: 11, minBlocked: true},
-    west: { ...thisRoom.exits.west, to: 2 }
-  }
+thisRoom.exits= {
+  ...thisRoom.exits,
+  northeast: { ...thisRoom.exits.northeast, to: "eleven", minBlocked: true},
+  west: { ...thisRoom.exits.west, to: "two" }
 };
 let one = thisRoom;
 
@@ -126,9 +122,9 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  northeast: { ...thisRoom.exits.northeast, to: 2, minBlocked: true },
-  east: { ...thisRoom.exits.east, to: 1 },
-  west: { ...thisRoom.exits.west, to: 3 }
+  northeast: { ...thisRoom.exits.northeast, to: "two", minBlocked: true },
+  east: { ...thisRoom.exits.east, to: "one" },
+  west: { ...thisRoom.exits.west, to: "three" }
 };
 let two = thisRoom;
 
@@ -139,8 +135,8 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  east: { ...thisRoom.exits.east, to: 2 },
-  west: { ...thisRoom.exits.west, to: 5, minBlocked: true }
+  east: { ...thisRoom.exits.east, to: "two" },
+  west: { ...thisRoom.exits.west, to: "five", minBlocked: true }
 };
 let three = thisRoom;
 
@@ -151,8 +147,8 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  northeast: { ...thisRoom.exits.northeast, to: 7 },
-  west: { ...thisRoom.exits.west, to: 5 }
+  northeast: { ...thisRoom.exits.northeast, to: "seven" },
+  west: { ...thisRoom.exits.west, to: "five" }
 };
 let four = thisRoom;
 
@@ -163,8 +159,8 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  east: { ...thisRoom.exits.east, to: 4 },
-  south: { ...thisRoom.exits.south, to: 3, minBlocked: true }
+  east: { ...thisRoom.exits.east, to: "four" },
+  south: { ...thisRoom.exits.south, to: "three", minBlocked: true }
 };
 let five = thisRoom;
 
@@ -176,22 +172,22 @@ thisRoom = new Room(
 thisRoom.exits = {
   ...thisRoom.exits,
   north: { to: 8, minBlocked: true },
-  east: { ...thisRoom.exits.east, to: 7, minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." }
+  east: { ...thisRoom.exits.east, to: "seven", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." }
 };
 let six = thisRoom;
 
 thisRoom = new Room(
   7,
   "Room Seven",
-  "This is Room 7. The western wall appears to be radiating a dull sparkle. In other news, there is a thick iron gate filling the southern doorway."
+  "This is Room 7. The western wall appears to be radiating a dull sparkle. In other news, there is a thick iron gate filling the northern doorway."
 );
 thisRoom.exits = {
   ...thisRoom.exits,
   north: { to: 8, blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
-  east: { ...thisRoom.exits.east, to: 9, minBlocked: true },
-  southwest: { ...thisRoom.exits.southwest, to: 4 },
-  west: { ...thisRoom.exits.west, to: 6, minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." },
-  down: { ...thisRoom.exits.down, to: 10 } 
+  east: { ...thisRoom.exits.east, to: "nine", minBlocked: true },
+  southwest: { ...thisRoom.exits.southwest, to: "four" },
+  west: { ...thisRoom.exits.west, to: "six", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." },
+  down: { ...thisRoom.exits.down, to: "ten" } 
 };
 let seven = thisRoom;
 
@@ -202,8 +198,8 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  south: { ...thisRoom.exits.south, to: 7, blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
-  west: { ...thisRoom.exits.west, to: 6, minBlocked: true },
+  south: { ...thisRoom.exits.south, to: "seven", blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
+  west: { ...thisRoom.exits.west, to: "six", minBlocked: true },
 };
 let eight = thisRoom;
 
@@ -214,8 +210,8 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  south: { ...thisRoom.exits.south, to: 10 },
-  west: { ...thisRoom.exits.west, to: 7, minBlocked: true },
+  south: { ...thisRoom.exits.south, to: "ten" },
+  west: { ...thisRoom.exits.west, to: "seven", minBlocked: true },
 };
 let nine = thisRoom;
 
@@ -226,10 +222,10 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  north: { to: 9 }, // N
-  east: { ...thisRoom.exits.east, to: 11 }, // E
-  southwest: { ...thisRoom.exits.southwest, to: 2, minBlocked: true }, // SW
-  up: { ...thisRoom.exits.up, to: 7 }, // UP
+  north: { to: "nine" }, // N
+  east: { ...thisRoom.exits.east, to: "eleven" }, // E
+  southwest: { ...thisRoom.exits.southwest, to: "two", minBlocked: true }, // SW
+  up: { ...thisRoom.exits.up, to: "seven" }, // UP
 };
 let ten = thisRoom;
 
@@ -240,12 +236,13 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  southwest: { ...thisRoom.exits.southwest, to: 1, minBlocked: true }, // SW
-  west: { ...thisRoom.exits.west, to: 10 }, // W
+  southwest: { ...thisRoom.exits.southwest, to: "one", minBlocked: true }, // SW
+  west: { ...thisRoom.exits.west, to: "ten" }, // W
 };
 let eleven = thisRoom;
 
 module.exports = {
+  zero: zero,
   one: one,
   two: two,
   three: three,

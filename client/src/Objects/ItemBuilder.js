@@ -13,7 +13,7 @@ let cellPhone = new Item(
   "cell phone",  // shortName
   "Your cell phone is a top-of-the-line Noxia Grunt 9, and has a whole ton of fun and useful apps. Too bad the battery is dead. Maybe you shouldn't have vlogged the entire Chauffr ride.",  // lookDesc
   ["cell", "phone", "noxia", "grunt", "cellphone"], // keywords
-  "playerInventory" // starting location
+  ["playerInventory"] // starting location
 );
 cellPhone.takeable = true;
 cellPhone.invSize = 1;
@@ -32,7 +32,7 @@ let bust = new Item(
   "bust",
   "A roughly-carved sculpture of an unknown gentleman. The unusually flat cranium does not assist any pretense of wisdom. There was once a name carved beneath the visage, but it has been scratched out.",
   ["bust", "sculpture", "head"],
-  ["five"]
+  ["two"]
 );
 bust.feature = true;
 
@@ -40,7 +40,7 @@ let sword = new Item(
   "rusty sword",
   "This once-noble weapon was clearly the armament of a mighty warrior, but has since been laid low by the elements. It still has some heft to it, though. (And, you notice, the words 'Made in Pakistan' stamped on the pommel.",
   ["sword", "rusty", "blade"],
-  ["four"]
+  ["three"]
 );
 sword.takeable = true;
 sword.invSize = 10;
