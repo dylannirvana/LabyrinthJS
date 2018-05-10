@@ -16,7 +16,7 @@ const Game = props => (
         <Title>Labyrinth.js</Title>
       </Col>
       <Col xs={6} md={{size: 3, order: 1}} className="buttonArea">
-        {props.authenticated ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.player, props.entities)}>Save Game</button>) : (<button className="gameButton smButton" ><Link to="/login">Log In</Link></button>)}
+        {props.currentState.authenticated ? (<button  className="gameButton smButton" onClick={props.handleSaveButton(props.currentState)}>Save Game</button>) : (<button className="gameButton smButton" ><Link to="/login">Log In</Link></button>)}
         <button className="gameButton smButton" onClick={props.viewHelpToggle}>Help</button>
       </Col>
       <Col xs={6} md={{size: 3, order: 5}} className="buttonArea">
@@ -24,7 +24,7 @@ const Game = props => (
         <button className="gameButton smButton"><Link to="/">Quit</Link></button>
       </Col>
       <Col xs={12} md={{size: 9, order: 4}}>
-        <RoomDesc text={props.textBuffer} />
+        <RoomDesc text={props.currentState.textBuffer} />
       </Col>
       <Col xs={12} md={{size: 9, order: 6}}>
         {props.children}
@@ -33,9 +33,20 @@ const Game = props => (
         <button className="gameButton viewCharacterButton" onClick={props.viewCharacterToggle}>Check Yourself</button>
       </Col>
       <Col md={{size: 3, order: 3}} className="d-none d-md-block" id="playerArea">
-        <Inventory inventory={props.player.inventory}/>
-        <Equipment equipment={props.player.equipment}/>
-        <Statistics stats={props.player.stats} moveCount={props.moveCount}/>
+        <Inventory inventory={props.currentState.playerInventory}/>
+        <Equipment 
+            wielded={props.currentState.wielded} 
+            head={props.currentState.head} 
+            body={props.currentState.body} 
+            arms={props.currentState.arms} 
+            legs={props.currentState.legs}
+          />
+        <Statistics
+          health={props.currentState.health}
+          attack={props.currentState.attack} 
+          defense={props.currentState.defense} 
+          moveCount={props.currentState.moveCount}
+        />
       </Col>
     </Row>
   </Container >
