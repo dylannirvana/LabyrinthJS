@@ -47,8 +47,7 @@ const loadNewGame = (prevState, props) => {
   let textBuffer = [];
   textBuffer.push("Welcome to the game.");
   let firstRoom = describeRoom(playerLocation, room, creatures)
-  textBuffer = firstRoom.relay.concat();
-  console.log(textBuffer);
+  textBuffer = textBuffer.concat(firstRoom.relay);
   textBuffer.push("Type a command to get started. Click the 'help' button for assistance with commands.");
 
   let thisState = { 
