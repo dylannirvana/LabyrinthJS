@@ -1,6 +1,9 @@
 {
   "name": "LabyrinthJS",
   "version": "0.1.0",
+  "engines": {
+    "node": "8.9.4"
+  },
   "description": "Text-adventure game for the JS environment",
   "main": "server.js",
   "scripts": {
@@ -8,7 +11,7 @@
     "client": "cd client && npm run start",
     "start": "./node_modules/.bin/concurrently \"./node_modules/.bin/nodemon\" \"npm run client\"",
     "build": "cd client && npm run build",
-    "deploy": "yarn build && git add . && git commit -m \"Building for production\" && git push origin master",
+    "deploy": "npm build && git add . && git commit -m \"Building for production\" && git push heroku master",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Matt Haddock",
