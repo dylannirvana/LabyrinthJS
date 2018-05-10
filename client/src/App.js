@@ -33,6 +33,35 @@ import Wrapper from "./components/Wrapper/Wrapper";
 // remove tap delay, essential for MaterialUI to work properly
 injectTapEventPlugin();
 
+// let Item = require("./Objects/ItemBuilder");
+// let Creature = require("./Objects/CreatureBuilder");
+// let Room = require("./Objects/RoomBuilder");
+// let newGameData = {
+//   moveCount: 0,
+//   player: {
+//     location: ["two"],
+//     equipment: {
+//       wielded: undefined,
+//       head: undefined,
+//       body: undefined,
+//       arms: undefined,
+//       legs: undefined
+//     },
+//     inventory: [Item.cellPhone],
+//     stats: {
+//       health: 100,
+//       attack: 0,
+//       defense: 3
+//     },
+//     options: {
+//       verbose: true,
+//     }
+//   },
+//   room: Room,
+//   creatures: [Creature.cat, Creature.minotaur],
+//   textBuffer: []
+// };
+
 class App extends Component {
 
   state = {
@@ -131,7 +160,8 @@ class App extends Component {
                   <Link to="/signup">Sign up</Link>
                 </div>
               )}
-              <PropsRoute exact path="/game" component={GamePage} 
+              <PropsRoute exact path="/game" component={GamePage}
+                // gameData={newGameData}
                 toggleAuthenticateStatus={this.toggleAuthenticateStatus}
                 handleQuitButton={this.handleQuitButton.bind(this)}
                 handleLoginButton={this.handleLoginButton} 
