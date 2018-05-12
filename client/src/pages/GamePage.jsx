@@ -12,7 +12,7 @@ import { Input } from "../components/Form";
 const loadNewGame = (prevState, props) => {
   let room = require ("../Objects/RoomBuilder");
   let Items = require("../Objects/ItemBuilder");
-  let Creatures = require("../Objects/CreatureBuilder");
+  let creature = require("../Objects/CreatureBuilder");
   
   // create player inventory
   let playerInventory = [];
@@ -26,18 +26,12 @@ const loadNewGame = (prevState, props) => {
         if (room[Items[property].startingLoc[i]]) {
           room[Items[property].startingLoc[i]].inventory.push(Items[property]);
         } else {
-          if (Creatures[Items[property].startingLoc[i]]) {
-            Creatures[Items[property].startingLoc[i]].inventory.push(Items[property]);
+          if (creature[Items[property].startingLoc[i]]) {
+            creature[Items[property].startingLoc[i]].inventory.push(Items[property]);
           }
         }
       } 
     }
-  };
-  
-  // populate creature array
-  let creatures = [];
-  for (let property in Creatures) {
-    creatures.push(Creatures[property]);
   };
 
   // place player
@@ -46,7 +40,7 @@ const loadNewGame = (prevState, props) => {
   // create initial textBuffer
   let textBuffer = [];
   textBuffer.push("Welcome to the game.");
-  let firstRoom = describeRoom(playerLocation, room, creatures, { relay: [] })
+  let firstRoom = describeRoom(playerLocation, room, creature, { relay: [] })
   textBuffer = textBuffer.concat(firstRoom.relay);
   textBuffer.push("Type a command to get started. Click the 'help' button for assistance with commands.");
 
@@ -55,7 +49,7 @@ const loadNewGame = (prevState, props) => {
     playerLocation: playerLocation,
     playerInventory: playerInventory,
     room: room, 
-    creatures: creatures,
+    creature: creature,
     textBuffer: textBuffer,
     health: 100,
     attack: 0,
@@ -126,7 +120,7 @@ const moveCommands = [
 // * Parse user command
 // *
 
-const parseCommand = (commandInput, playerLocation, playerInventory, room, creatures, currData) => {
+const parseCommand = (commandInput, playerLocation, playerInventory, room, creature, currData) => {
   // console.log("*** at start of command: room =", room);
   // trim unnecessary words
   const commandWords = commandInput.trim().toLowerCase().split(" ", 8);
@@ -138,22 +132,22 @@ const parseCommand = (commandInput, playerLocation, playerInventory, room, creat
   commandWords.forEach(ele => {if (!uselessWords.includes(ele)) command.push(ele)});
   //check for move command
   if (moveCommands.indexOf(command[0]) !== -1) {
-    currData = movePlayer(command, playerLocation, playerInventory, room, creatures, currData);
+    currData = movePlayer(command, playerLocation, playerInventory, room, creature, currData);
     console.log("outgoing data from movePlayer() => parseCommand() = ", currData);
     return currData;
   }
   else if (specialCommands.indexOf(command[0]) !== -1) {
-    currData = specialAction(command, playerLocation, playerInventory, room, creatures, currData);
+    currData = specialAction(command, playerLocation, playerInventory, room, creature, currData);
     console.log("outgoing data from specialCommands() => parseCommand() =", currData);
     return currData;
   }
   else if (itemCommands.indexOf(command[0]) !== -1) {
-    currData = itemAction(command, playerLocation, playerInventory, room, creatures, currData);
+    currData = itemAction(command, playerLocation, playerInventory, room, creature, currData);
     console.log("outgoing data from itemCommands() => parseCommand() =", currData);
     return currData;
   }
   else if (generalCommands.indexOf(command[0]) !== -1) {
-    currData = generalAction(command, playerLocation, playerInventory, room, creatures, currData);
+    currData = generalAction(command, playerLocation, playerInventory, room, creature, currData);
     console.log("outgoing data from generalCommands() => parseCommand() =", currData);
     return currData;
   }
@@ -195,32 +189,21 @@ const integrateStateChange = (currData, newStateChange) => {
 // * Turn handling for Creatures
 // *
 
-const advanceTurn = (creatures, playerLocation, room, currData) => {
-  for (let i = 0; i < creatures.length; i++) {
+const advanceTurn = (creature, playerLocation, room, currData) => {
+  for (let thisCreature in creature) {
+    console.log("thisCreature =", thisCreature);
     // check if there is an action queued in Creature's script array
-    let creatureIndex = i;
-    let thisCreature = creatures[i].shortName;
-    if (creatures[i].script.length) {
+    if (creature[thisCreature].script.length) {
       // console.log(thisCreature+"'s location before move = "+creatures[i].location);
       // console.log("room =", room[ele.location]);
-      switch (creatures[i].script[0]) {
+      switch (creature[thisCreature].script[0]) {
         case "moveRandom" : 
           let exits = [];
           // console.log("Creature =", creatures[i].shortName, ", location =", creatures[i].location);
-          let thisRoom = room[creatures[i].location].exits;
           // console.log("thisRoom =", thisRoom);
-          if (thisRoom.north && thisRoom.north.visible && !thisRoom.north.blocked && ((thisCreature !== "Minotaur" || thisRoom.north.minPass))) {exits.push(thisRoom.north.to)};
-          if (thisRoom.northeast && thisRoom.northeast.visible && !thisRoom.northeast.blocked && ((thisCreature !== "Minotaur" || thisRoom.northeast.minPass))) {exits.push(thisRoom.northeast.to)};
-          if (thisRoom.east && thisRoom.east.visible && !thisRoom.east.blocked && (thisCreature !== "Minotaur" || thisRoom.east.minPass)) {exits.push(thisRoom.east.to)};
-          if (thisRoom.southeast && thisRoom.southeast.visible && !thisRoom.southeast.blocked && ((thisCreature !== "Minotaur" || thisRoom.southeast.minPass))) {exits.push(thisRoom.southeast.to)};
-          if (thisRoom.south && thisRoom.south.visible && !thisRoom.south.blocked && ((thisCreature !== "Minotaur" || thisRoom.south.minPass))) {exits.push(thisRoom.south.to)};
-          if (thisRoom.southwest && thisRoom.southwest.visible && !thisRoom.southwest.blocked && ((thisCreature !== "Minotaur" || thisRoom.southwest.minPass))) {exits.push(thisRoom.southwest.to)};
-          if (thisRoom.west && thisRoom.west.visible && !thisRoom.west.blocked && ((thisCreature !== "Minotaur" || thisRoom.west.minPass))) {exits.push(thisRoom.west.to)};
-          if (thisRoom.northwest && thisRoom.northwest.visible && !thisRoom.northwest.blocked && ((thisCreature !== "Minotaur" || thisRoom.northwest.minPass))) {exits.push(thisRoom.northwest.to)};
-          if (thisRoom.up && thisRoom.up.visible && !thisRoom.up.blocked && ((thisCreature !== "Minotaur" || thisRoom.up.minPass))) {exits.push(thisRoom.up.to)};
-          if (thisRoom.down && thisRoom.down.visible && !thisRoom.down.blocked && ((thisCreature !== "Minotaur" || thisRoom.down.minPass))) {exits.push(thisRoom.down.to)};
-          if (thisRoom.in && thisRoom.in.visible && !thisRoom.in.blocked && ((thisCreature !== "Minotaur" || thisRoom.in.minPass))) {exits.push(thisRoom.in.to)};
-          if (thisRoom.out && thisRoom.out.visible && !thisRoom.out.blocked && ((thisCreature !== "Minotaur" || thisRoom.out.minPass))) {exits.push(thisRoom.out.to)};
+          for (let exit in room[creature[thisCreature].location].exits) {
+            if ([exit].to && ![exit].invisible && ![exit].blocked) {exits.push([exit])};
+          }
           let roll = Math.floor(Math.random() * Math.floor(100));
           // console.log("exits =", exits);
           if (roll <= 20) {
@@ -229,9 +212,16 @@ const advanceTurn = (creatures, playerLocation, room, currData) => {
           } else {
             for (let i = 0 ; i < exits.length; i++) {
               if (roll <= 20 + (i+1) * (80 / exits.length)) {
-                console.log(thisCreature+"'s location after move = "+exits[i]+" ; roll = ", roll);
-                this.echo(["The creature walks to another room."], "noTime");
-                creatures[creatureIndex].location = exits[i];
+                currData = move(creature[thisCreature], room[creature[thisCreature].location].exits[exits[i]], currData);
+                if (currData.pass) {
+                  if (room[creature[thisCreature].location] === playerLocation) {
+                    currData.relay.push("The "+creature[thisCreature].shortName+" leaves "+exits[i]+".");
+                  }
+                  console.log(creature[thisCreature]+"'s location after move = "+currData.creature[thisCreature].location+" ; roll = ", roll);
+                  if (currData.creature[thisCreature].location === playerLocation) {
+                    currData.relay.push("A "+creature[thisCreature].shortName+" enters the room.");
+                  }
+                }
                 break;
               }
             }
@@ -241,23 +231,25 @@ const advanceTurn = (creatures, playerLocation, room, currData) => {
           break;
         case "search" :
           break;
+        case "flee" :
+          break;
         case "blinded" :
           break;
         default: 
-          console.log("advanceTurn() defaulted for "+thisCreature);
-          return { relay: "advanceTurn() defaulted for "+thisCreature }; 
+          console.log("advanceTurn() defaulted for "+creature[thisCreature]);
+          currData.relay.push("advanceTurn() defaulted for "+creature[thisCreature]); 
       }
     }
   }
-  console.log("Outgoing creatures from advanceTurn() =", creatures);
-  return { stateChange: { creatures: creatures.concat() }};
+  console.log("outgoing data from advanceTurn() =", currData);
+  return currData;
 };
 
 // *
 // * Move actions
 // *
 
-const movePlayer = (words, playerLocation, playerInventory, room, creatures, currData) => {
+const movePlayer = (words, playerLocation, playerInventory, room, creature, currData) => {
   if ((words[0] === "go" || words[0] === "walk" ||words[0] === "run")) {words.shift()};
   if ((words[0] === "n" || words[0] === "north") && (words[1] === "e" || words[1] === "east")) {words[0] = "northeast"};
   if ((words[0] === "n" || words[0] === "north") && (words[1] === "w" || words[1] === "west")) {words[0] = "northwest"};
@@ -282,7 +274,7 @@ const movePlayer = (words, playerLocation, playerInventory, room, creatures, cur
   if (room[playerLocation].exits[word].to) {
     currData = move("player", room[playerLocation].exits[word], currData);
     if (currData.pass) {
-      currData = describeRoom(currData.stateChange.playerLocation, room, creatures, currData);
+      currData = describeRoom(currData.stateChange.playerLocation, room, creature, currData);
     };
   } else currData.relay.push("You can't go that way.");
   console.log("outgoing data from movePlayer() =", currData);
@@ -292,21 +284,15 @@ const movePlayer = (words, playerLocation, playerInventory, room, creatures, cur
 // Determines if a move direction works out
 const move = (who, doorway, currData) => {
   console.log("data coming into move(), who =", who, "  doorway =", doorway);
-  let pass = false;
-  // ** maybe move some of this into advanceTurn creature movement
-  // check if wall is invisible
-  if (doorway.invisible && who.dumb ) {
-    currData.relay.push("The "+who.shortName+" doesn't seem to realize it can go there.") ;
-  } else
+  currData.pass = false;
+  // check if doorway blocked (only player will be run into this check)
+  if (doorway.blocked) {
+    currData.relay.push(doorway.blocked);
+  }
   // check if blocking Minotaur
-  if (!(who.shortName !== "Minotaur" || !doorway.minBlocked)) {
+  if (!(who.shortName !== "minotaur" || !doorway.minBlocked)) {
     currData.relay.push("The Minotaur can't quite fit through the passage, and roars in frustration.");
     console.log("Minotaur can't pass through doorway to "+doorway+".");
-  } else
-  // check if doorway blocked (should only be player reaching this point)
-  if (doorway.blocked) {
-    if (who !== "player") { console.log("SYSTEM: Creature shouldn't be in 'blocked' check in move(); creature =", who); }
-    currData.relay.push(doorway.blocked);
   } else {
     // the entity can successfully pass
     currData.pass = true;
@@ -317,7 +303,13 @@ const move = (who, doorway, currData) => {
         playerLocation: doorway.to
       });
     } else {
-      console.log("*** do something to set creature location here");
+      currData = integrateStateChange(currData, {
+        creature: {
+          [who]: {
+            location: doorway.to
+          }
+        }
+      })
     }
   }
   console.log("outgoing data from move() =", currData);
@@ -325,18 +317,19 @@ const move = (who, doorway, currData) => {
 };
 
 // relay description of room and any present items, creatures, and exits
-const describeRoom = (playerLocation, room, creatures, currData) => {
+const describeRoom = (playerLocation, room, creature, currData) => {
   // add room name and description to echo relay
   currData.relay.push(room[playerLocation].name, room[playerLocation].desc);
   // add creatures present to echo relay
-  creatures.forEach((ele, i) => {
-    if (ele.location === playerLocation) {
-      let thisCreature="There is a ";
-      thisCreature+=ele.shortName;
-      thisCreature+=ele.doing;
-      currData.relay.push(thisCreature);
+  for (let thisCreature in creature) {
+    if (creature[thisCreature].location === playerLocation) {
+      console.log("checking location of", creature[thisCreature], "=", creature[thisCreature].location);
+      let str="There is a ";
+      str+=creature[thisCreature].shortName;
+      str+=creature[thisCreature].doing;
+      currData.relay.push(str);
     }
-  })
+  }
   // add room inventory contents to relay
   if (room[playerLocation].inventory.filter(item => !item.feature)) {
     let items = [];
@@ -427,7 +420,7 @@ const describeRoom = (playerLocation, room, creatures, currData) => {
 // * Special actions
 // *
 
-const specialAction = (words, playerLocation, playerInventory, roomInventory, creatures, currData) => {
+const specialAction = (words, playerLocation, playerInventory, roomInventory, creature, currData) => {
   switch (words[0]) {
     case "again" : case "g" : 
       console.log("Work out method for 'again'")
@@ -451,13 +444,13 @@ const specialAction = (words, playerLocation, playerInventory, roomInventory, cr
 // * Item actions
 // *
 
-const itemAction = (words, playerLocation, playerInventory, room, creatures, currData) => {
+const itemAction = (words, playerLocation, playerInventory, room, creature, currData) => {
   switch (words[0]) {
     case "take" : case "get" : case "pick" : case "grab" : {
-      currData = takeItem(words[1], playerLocation, playerInventory, room, creatures, currData); break;
+      currData = takeItem(words[1], playerLocation, playerInventory, room, creature, currData); break;
     }
     case "drop" : case "discard" : {
-      currData = dropItem(words[1], playerLocation, playerInventory, room, creatures, currData); break;
+      currData = dropItem(words[1], playerLocation, playerInventory, room, creature, currData); break;
     }
     default : 
       currData.relay.push("SYSTEM: Command not defined. - at itemAction(), words = '"+words.join(", "));
@@ -467,7 +460,7 @@ const itemAction = (words, playerLocation, playerInventory, room, creatures, cur
   return currData;
 }
 
-const takeItem = (word, playerLocation, playerInventory, room, creatures, currData) => {
+const takeItem = (word, playerLocation, playerInventory, room, creature, currData) => {
   if (word === "all" || word === "everything") {
     if (room[playerLocation].inventory.filter(item => !item.feature)) {
       playerInventory = playerInventory.concat(room[playerLocation].inventory.filter(item => !item.feature));
@@ -523,9 +516,9 @@ const takeItem = (word, playerLocation, playerInventory, room, creatures, currDa
       return currData;
     }
   }
-  for (let i = 0; i < creatures.length; i++) {
-    if (creatures[i].location === playerLocation) {
-      if (creatures[i].keywords.includes(word)) {
+  for (let thisCreature in creature) {
+    if (creature[thisCreature].location === playerLocation) {
+      if (creature[thisCreature].keywords.includes(word)) {
         currData.relay.push("I don't think they would like that.");
         console.log("Tried to take a creature in takeItem(word). outgoing data =", currData);
         return currData;
@@ -538,7 +531,7 @@ const takeItem = (word, playerLocation, playerInventory, room, creatures, currDa
   return currData;
 };
 
-const dropItem = (word, playerLocation, playerInventory, room, creatures, currData) => {
+const dropItem = (word, playerLocation, playerInventory, room, creature, currData) => {
   if (!playerInventory.length) {
     currData.relay.push("You aren't carrying anything!");
     console.log("Tried to drop from empty inv in dropItem(all). outgoing data =", currData);
@@ -589,10 +582,10 @@ const dropItem = (word, playerLocation, playerInventory, room, creatures, currDa
 // * General actions
 // *
 
-const generalAction = (words, playerLocation, playerInventory, room, creatures, currData) => {
+const generalAction = (words, playerLocation, playerInventory, room, creature, currData) => {
   switch (words[0]) {
     case "l" : case "look" : case "exa" : case "examine" :
-      currData = examine(words, playerLocation, playerInventory, room, creatures, currData); break;
+      currData = examine(words, playerLocation, playerInventory, room, creature, currData); break;
     case "z" : case "rest" : case "wait" :
       currData.relay.push("You chill for a minute. It's been a tough day, and you've earned it."); 
       currData.takesTime = true; break;
@@ -605,9 +598,9 @@ const generalAction = (words, playerLocation, playerInventory, room, creatures, 
 }
 
 // Examine/Look action command
-const examine = (words, playerLocation, playerInventory, room, creatures, currData) => {
+const examine = (words, playerLocation, playerInventory, room, creature, currData) => {
   if (words.length === 1 || words[1] === "room" || words[1] === "around") {
-    let result = describeRoom(playerLocation, room, creatures);
+    let result = describeRoom(playerLocation, room, creature);
     currData.relay = currData.relay.concat(result.relay);
     console.log("Examining room in examine(word). outgoing data =", currData);
     return currData;
@@ -637,25 +630,22 @@ const examine = (words, playerLocation, playerInventory, room, creatures, currDa
     }
   }
   // check present creatures if object not yet found
-  for (let i = 0; i < creatures.length; i++) {
-    if (creatures[i].location === playerLocation) {
-      if (creatures[i].keywords.includes(words[1])) {
-        currData.relay.push(creatures[i].lookDesc);
+  for (let thisCreature in creature) {
+    if (creature[thisCreature].location === playerLocation) {
+      if (creature[thisCreature].keywords.includes(words[1])) {
+        currData.relay.push(creature[thisCreature].lookDesc);
         console.log("Found '"+words[1]+"' in creature array in examine(word). outgoing data =", currData);
-        return currData;
-      }
-    }
-  }
-  // check present creature features (in creature inventory) if object not yet found
-  for (let i = 0; i < creatures.length; i++) {
-    if (creatures[i].location === playerLocation) {
-      for (let j = 0; j < creatures[i].inventory.length; j++) {
-        if (creatures[i].inventory[j].keywords.includes([words[1]])) {
-          currData.relay.push(creatures[i].inventory[j].lookDesc);
-          console.log("Found '"+words[1]+"' in creatureInv in examine(word). outgoing data =", currData);
-          return currData;
+      } else {
+        // check present creature features (in creature inventory) if object not yet found
+        for (let j = 0; j < creature[thisCreature].inventory.length; j++) {
+          if (creature[thisCreature].inventory[j].keywords.includes([words[1]])) {
+            currData.relay.push(creature[thisCreature].inventory[j].lookDesc);
+            console.log("Found '"+words[1]+"' in creatureInv in examine(word). outgoing data =", currData);
+            return currData;
+          }
         }
       }
+      return currData;
     }
   }
   currData.relay.push("You don't see that here.");
@@ -780,7 +770,7 @@ class GamePage extends React.Component {
     playerLocation: "two",
     playerInventory: [],
     room: {}, 
-    creatures: [],
+    creature: {},
     textBuffer: [],
     health: 100,
     attack: 0,
@@ -813,7 +803,7 @@ class GamePage extends React.Component {
       let moveCount = this.state.moveCount;
       let playerLocation = this.state.playerLocation;
       let playerInventory = this.state.playerInventory.concat();
-      let creatures = this.state.creatures.concat();
+      let creature = this.state.creature;
       let room = this.state.room;
       let currData = { relay: [], stateChange: {}, takesTime: false };
       console.log("in handlecommand: room =", room);
@@ -821,11 +811,11 @@ class GamePage extends React.Component {
       // add user command to relay
       currData.relay.push("> "+this.state.userCommand);
       // start command processing here
-      currData = parseCommand(this.state.userCommand, playerLocation, playerInventory, room, creatures, currData);
+      currData = parseCommand(this.state.userCommand, playerLocation, playerInventory, room, creature, currData);
       console.log("currData returned from parseCommand() =", currData);
       // advance game time, resolve entity action
       if (currData.takesTime) {
-        currData = advanceTurn(creatures, playerLocation, room, currData);
+        currData = advanceTurn(creature, playerLocation, room, currData);
         console.log("currData returned from advanceTurn() =", currData);
       }
       await this.setState((prevState, props) => (updateState(prevState, props, currData)));
