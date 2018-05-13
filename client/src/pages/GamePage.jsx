@@ -277,9 +277,10 @@ const move = (who, doorway, currData) => {
   console.log("data coming into move(), who =", who, "  doorway =", doorway);
   currData.pass = false;
   // check if doorway blocked (only player will be run into this check)
+  console.log("doorway =", doorway);
   if (doorway.blocked) {
     currData.relay.push(doorway.blocked);
-  }
+  } else 
   // check if blocking Minotaur
   if (!(who.shortName !== "minotaur" || !doorway.minBlocked)) {
     currData.relay.push("The Minotaur can't quite fit through the passage, and roars in frustration.");

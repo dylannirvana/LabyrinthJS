@@ -171,7 +171,7 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  north: { to: 8, minBlocked: true },
+  north: { to: "eight", minBlocked: true },
   east: { ...thisRoom.exits.east, to: "seven", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." }
 };
 let six = thisRoom;
@@ -183,7 +183,7 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  north: { to: 8, blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
+  north: { to: "eight", blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
   east: { ...thisRoom.exits.east, to: "nine", minBlocked: true },
   southwest: { ...thisRoom.exits.southwest, to: "four" },
   west: { ...thisRoom.exits.west, to: "six", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." },
