@@ -37,9 +37,6 @@ const loadGame = (prevState, props) => {
   // place player's starting room position
   let playerLocation = "two";
 
-  // establish creaturesPresent at starting position
-  let creaturesPresent = creaturesHere(prevState.allCreatures, prevState.playerLocation);
-  
   // create initial relay
   let relay = [];
   relay.push("Welcome to the game.");
@@ -69,7 +66,7 @@ const loadGame = (prevState, props) => {
   };
   // console.log(thisState);
   let initialData = { relay: relay, state: thisState, takesTime: false };
-  let firstRoom = describeRoom(initialData, creaturesPresent);
+  let firstRoom = describeRoom(initialData, creaturesHere(thisState.allCreatures, thisState.playerLocation));
   relay.concat(firstRoom.relay);
   return thisState;
 };
