@@ -122,7 +122,7 @@ thisRoom = new Room(
 );
 thisRoom.exits = {
   ...thisRoom.exits,
-  northeast: { ...thisRoom.exits.northeast, to: "two", minBlocked: true },
+  northeast: { ...thisRoom.exits.northeast, to: "ten", minBlocked: true },
   east: { ...thisRoom.exits.east, to: "one" },
   west: { ...thisRoom.exits.west, to: "three" }
 };
@@ -185,7 +185,7 @@ thisRoom = new Room(
 thisRoom.exits = {
   ...thisRoom.exits,
   north: { to: "eight", blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
-  east: { ...thisRoom.exits.east, to: "nine", minBlocked: true },
+  east: { ...thisRoom.exits.east, to: "nine" },
   southwest: { ...thisRoom.exits.southwest, to: "four" },
   west: { ...thisRoom.exits.west, to: "six", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." },
   down: { ...thisRoom.exits.down, to: "ten" } 
@@ -212,7 +212,7 @@ thisRoom = new Room(
 thisRoom.exits = {
   ...thisRoom.exits,
   south: { ...thisRoom.exits.south, to: "ten" },
-  west: { ...thisRoom.exits.west, to: "seven", minBlocked: true },
+  west: { ...thisRoom.exits.west, to: "seven" },
 };
 let nine = thisRoom;
 

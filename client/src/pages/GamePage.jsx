@@ -35,7 +35,7 @@ const loadGame = (prevState, props) => {
   };
 
   // place player's starting room position
-  let playerLocation = "seven";
+  let playerLocation = "two";
 
   // establish creaturesPresent at starting position
   let creaturesPresent = creaturesHere(prevState.allCreatures, prevState.playerLocation);
@@ -185,34 +185,29 @@ const parseCommand = (commandInput, currData) => {
 
 const creaturesMove = (currData) => {
   for (let thisCreature in currData.state.allCreatures) {
-    console.log("thisCreature =", thisCreature);
     // check if there is an action queued in Creature's script array
     if (currData.state.allCreatures[thisCreature].script.length) {
-      console.log(thisCreature+"'s location before move = "+currData.state.allCreatures[thisCreature].location);
       // console.log("room =", room[ele.location]);
       switch (currData.state.allCreatures[thisCreature].script[0]) {
         case "moveRandom" : 
           let exits = [];
-          // console.log("thisRoom =", thisRoom);
           for (let exit in currData.state.room[currData.state.allCreatures[thisCreature].location].exits) {
             let thisExit = currData.state.room[currData.state.allCreatures[thisCreature].location].exits[exit];
+            // console.log("checking", thisCreature, "'s exit ", thisExit);
             if (
-                thisExit.to && !thisExit.invisible && !thisExit.blocked &&
-                !thisExit.minBlocked
+                thisExit.to && !thisExit.invisible && !thisExit.blocked && (thisCreature !== "minotaur" || !thisExit.minBlocked)
             ) {
               exits.push([exit]);
             };
           }
           let roll = Math.floor(Math.random() * Math.floor(100));
-          // console.log("exits =", exits);
           if (roll <= 50) {
             // creature stays put
-            console.log(thisCreature, "staying put, roll =", roll);
           } else {
             for (let i = 0 ; i < exits.length; i++) {
               if (roll <= 50 + (i+1) * (50 / exits.length)) {
                 currData = move(thisCreature, exits[i], currData.state.allCreatures[thisCreature].location, currData.state.room[currData.state.allCreatures[thisCreature].location].exits[exits[i]], currData);
-                console.log(thisCreature+"'s location after move = '"+currData.state.allCreatures[thisCreature].location+"' ; roll = ", roll);
+                // console.log(thisCreature+"'s location after move = '"+currData.state.allCreatures[thisCreature].location+"' ; roll = ", roll);
                 break;
               }
             }
@@ -299,9 +294,11 @@ const move = (who, direction, startingLocation, doorway, currData) => {
       console.log("move(player) - mergeObjects() returns", currData);
     } else {
       // handle successful creature move
-      // check if player has changed location this turn; use playerLocation in currData.state
+
+      // set up relay for when creature enters/exits player's location
       if (doorway.to === currData.state.playerLocation) {
         let creaturesPresent = creaturesHere(currData.state.allCreatures, currData.state.playerLocation);
+        // set up relay for blind player
         if (who === "minotaur") {
           if (canSee(currData.state.room[currData.state.playerLocation], currData.state.playerInventory, creaturesPresent, currData.state.modifiers)) {
             currData.relay.push("The Minotaur charges into the room!");
