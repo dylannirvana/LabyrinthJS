@@ -1,6 +1,6 @@
 {
   "name": "LabyrinthJS",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Text-adventure game for the JS environment",
   "main": "index.js",
   "scripts": {
