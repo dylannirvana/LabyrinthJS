@@ -3,7 +3,6 @@
   Game entities and rooms will be object-based
   - fresh game state
   - saved game states
-- Will main game computing be done in App.js?
 - Incorporated separate pages into single-page app so state is retained
   - "cannot update during an existing state transition"
   - bind method?
@@ -20,7 +19,6 @@
   - How to build the environment, then move into state
 
 # Unimplemented
-- command parser
 - entity builds
   - action scripts
 - save states

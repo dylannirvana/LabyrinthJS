@@ -1,311 +1,261 @@
-const Room = require("./RoomConstructor.js");
-const Item = require("./ItemConstructor.js");
-
-const room = [];
 
 // Rooms
+function Room(
+  location, name, desc
+  ) {
+  this.location = location;
+  this.name = name;
+  this.desc = desc;
+  this.inventory = [];
+  this.exits = {
+    north : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    northeast : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    east : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    southeast : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    south : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    southwest : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    west : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    northwest: {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    up : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    down : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    in : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+    out : {
+      to: false,
+      minBlocked: false,
+      invisible: false,
+      blocked: false,
+      flavor: false
+    },
+  };
+  this.script = [];
+}
 
-let newRoom = new Room(
-  0,  // location
-  "Room Zero", // name
-  "This is Room 0. You shouldn't be in here.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
+let thisRoom = new Room(
+  0,
+  "Room Zero",
+  "This is Room 0. You shouldn't be in here. Too bad you can't get out."
 );
-room.push(newRoom);
+let zero = thisRoom;
 
-newRoom = new Room(
-  1,  // location
-  "Room One", // name
-  "This is Room 1.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: 11, minPass: false, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 2, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
+thisRoom = new Room(
+  1,
+  "Room One",
+  "This is Room 1."
 );
-room.push(newRoom);
+thisRoom.exits= {
+  ...thisRoom.exits,
+  northeast: { ...thisRoom.exits.northeast, to: "eleven", minBlocked: true},
+  west: { ...thisRoom.exits.west, to: "two" }
+};
+let one = thisRoom;
 
-let brick = new Item(
-  1,  // itemId
-  "brick",  // shortName
-  "A dusty brick of stone.",  // longDesc
-  ["brick"], // keywords
-  5,  // invSize
-  false, // wear
-  2,  // value
-);
-let bust = new Item(
+thisRoom = new Room(
   2,
-  "bust",
-  "A roughly-carved sculpture of an unknown gentleman. The unusually flat cranium does not assist any pretense of wisdom. There was once a name carved beneath the visage, but it has been scratched out.",
-  ["bust", "sculpture", "head"]
-)
-newRoom = new Room(
-  2,  // location
-  "Room Two", // name
-  "This is Room 2. There is a carved bust on a pedestal in the corner of the room.",  // desc
-  [brick],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: 10, minPass: false, visible: true, blocked: false }, // NE
-  { to: 1, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: 0, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 3, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [bust] // features
+  "Room Two",
+  "This is Room 2. A carved bust sits atop a pedestal in the corner of the room."
 );
-room.push(newRoom);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  northeast: { ...thisRoom.exits.northeast, to: "ten", minBlocked: true },
+  east: { ...thisRoom.exits.east, to: "one" },
+  west: { ...thisRoom.exits.west, to: "three" }
+};
+let two = thisRoom;
 
-let sword = new Item(
-  3, 
-  "rusty sword",
-  "This once-noble weapon was clearly the armament of a mighty warrior, but has since been laid low by the elements. It still has some heft to it, though. (And, you notice, the words 'Made in Pakistan' stamped on the pommel.",
-  ["sword", "rusty"],
+thisRoom = new Room(
+  3,
+  "Room Three",
+  "This is Room 3."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  east: { ...thisRoom.exits.east, to: "two" },
+  west: { ...thisRoom.exits.west, to: "five", minBlocked: true }
+};
+let three = thisRoom;
+
+thisRoom = new Room(
+  4,
+  "Room Four",
+  "There are a few piles of dried leaves collected in the corners of this toom. On the wall is a small framed painting of a white house."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  northeast: { ...thisRoom.exits.northeast, to: "seven" },
+  west: { ...thisRoom.exits.west, to: "five" }
+};
+thisRoom.dark = true;
+let four = thisRoom;
+
+thisRoom = new Room(
+  5,
+  "Room Five",
+  "This is Room 5."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  east: { ...thisRoom.exits.east, to: "four" },
+  south: { ...thisRoom.exits.south, to: "three", minBlocked: true }
+};
+let five = thisRoom;
+
+thisRoom = new Room(
+  6,
+  "Room Six",
+  "This is Room 6. The eastern wall appears to be radiating a dull sparkle."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  north: { to: "eight", minBlocked: true },
+  east: { ...thisRoom.exits.east, to: "seven", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." }
+};
+let six = thisRoom;
+
+thisRoom = new Room(
+  7,
+  "Room Seven",
+  "This is Room 7. The western wall appears to be radiating a dull sparkle. In other news, there is a thick iron gate filling the northern doorway."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  north: { to: "eight", blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
+  east: { ...thisRoom.exits.east, to: "nine" },
+  southwest: { ...thisRoom.exits.southwest, to: "four" },
+  west: { ...thisRoom.exits.west, to: "six", minBlocked: true, flavor: "You effortlessly pass through the wall. Cool." },
+  down: { ...thisRoom.exits.down, to: "ten" } 
+};
+let seven = thisRoom;
+
+thisRoom = new Room(
+  8,
+  "Room Eight",
+  "This is Room 8. There is a thick iron gate filling the southern doorway.",
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  south: { ...thisRoom.exits.south, to: "seven", blocked: "You put your hand on the iron gate. Yep, it's real. And locked." },
+  west: { ...thisRoom.exits.west, to: "six", minBlocked: true },
+};
+let eight = thisRoom;
+
+thisRoom = new Room(
+  9,
+  "Room Nine",
+  "This is Room 9."
+);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  south: { ...thisRoom.exits.south, to: "ten" },
+  west: { ...thisRoom.exits.west, to: "seven" },
+};
+let nine = thisRoom;
+
+thisRoom = new Room(
   10,
-  "wielded",
-  10
-)
-newRoom = new Room(
-  3,  // location
-  "Room Three", // name
-  "This is Room 3.",  // desc
-  [sword],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 2, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 5, minPass: false, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
+  "Room Ten",
+  "This is Room 10."
 );
-room.push(newRoom);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  north: { to: "nine" }, // N
+  east: { ...thisRoom.exits.east, to: "eleven" }, // E
+  southwest: { ...thisRoom.exits.southwest, to: "two", minBlocked: true }, // SW
+  up: { ...thisRoom.exits.up, to: "seven" }, // UP
+};
+let ten = thisRoom;
 
-newRoom = new Room(
-  4,  // location
-  "Room Four", // name
-  "This is Room 4.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: 7, minPass: true, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 5, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
+thisRoom = new Room(
+  11,
+  "Room Eleven",
+  "This is Room 11. You feel a strange sense of vertigo here, almost as if you were hanging upside down."
 );
-room.push(newRoom);
+thisRoom.exits = {
+  ...thisRoom.exits,
+  southwest: { ...thisRoom.exits.southwest, to: "one", minBlocked: true }, // SW
+  west: { ...thisRoom.exits.west, to: "ten" }, // W
+};
+let eleven = thisRoom;
 
-newRoom = new Room(
-  5,  // location
-  "Room Five", // name
-  "This is Room 5.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 4, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: 3, minPass: false, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  6,  // location
-  "Room Six", // name
-  "This is Room 6.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: 8, minPass: false, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 7, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  7,  // location
-  "Room Seven", // name
-  "This is Room 7.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: 8, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 9, minPass: false, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: 4, minPass: true, visible: true, blocked: false }, // SW
-  { to: 6, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: 10, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  8,  // location
-  "Room Eight", // name
-  "This is Room 8.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: 7, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 6, minPass: false, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  9,  // location
-  "Room Nine", // name
-  "This is Room 9.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: 10, minPass: true, visible: true, blocked: false }, // S
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SW
-  { to: 7, minPass: false, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  10,  // location
-  "Room Ten", // name
-  "This is Room 10.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: 9, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: 11, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: 2, minPass: false, visible: true, blocked: false }, // SW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: 7, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-newRoom = new Room(
-  11,  // location
-  "Room Eleven", // name
-  "This is Room 11.",  // desc
-  [],  // [items]
-  [],  // [entities]
-  { to: undefined, minPass: true, visible: true, blocked: false }, // N
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // E
-  { to: undefined, minPass: true, visible: true, blocked: false }, // SE
-  { to: undefined, minPass: true, visible: true, blocked: false }, // S
-  { to: 1, minPass: false, visible: true, blocked: false }, // SW
-  { to: 10, minPass: true, visible: true, blocked: false }, // W
-  { to: undefined, minPass: true, visible: true, blocked: false }, // NW
-  { to: undefined, minPass: true, visible: true, blocked: false }, // UP
-  { to: undefined, minPass: true, visible: true, blocked: false }, // DOWN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // IN
-  { to: undefined, minPass: true, visible: true, blocked: false }, // OUT
-  [], // action script
-  [] // features
-);
-room.push(newRoom);
-
-module.exports = room;
+module.exports = {
+  zero: zero,
+  one: one,
+  two: two,
+  three: three,
+  four: four,
+  five: five,
+  six: six,
+  seven: seven,
+  eight: eight,
+  nine: nine,
+  ten: ten,
+  eleven: eleven
+};
 
 
 // // In this module:
