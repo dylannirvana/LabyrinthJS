@@ -256,7 +256,6 @@ const movePlayer = (words, currData) => {
   }
   if (currData.state.room[currData.state.playerLocation].exits[word].to) {
     currData = move("player", word, currData.state.playerLocation, currData.state.room[currData.state.playerLocation].exits[word], currData);
-    console.log("currData.pass =", currData.pass);
     if (currData.pass) {
       currData.takesTime = true;
     };
@@ -283,12 +282,12 @@ const move = (who, direction, startingLocation, doorway, currData) => {
       // handle successful player move
       // check for flavor text
       if (doorway.flavor) { currData.relay.push(doorway.flavor); }
-      console.log("move(player) - mergeObjects() with ", currData.state);
+      // console.log("move(player) - mergeObjects() with ", currData.state);
       currData.state = mergeObjects(currData.state, { 
         playerLocation: doorway.to
       });
       describeRoom(currData, creaturesHere(currData.state.allCreatures, currData.state.playerLocation))
-      console.log("move(player) - mergeObjects() returns", currData);
+      // console.log("move(player) - mergeObjects() returns", currData);
     } else {
       // handle successful creature move
 
