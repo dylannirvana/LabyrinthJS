@@ -143,13 +143,14 @@ let three = thisRoom;
 thisRoom = new Room(
   4,
   "Room Four",
-  "This is Room 4."
+  "There are a few piles of dried leaves collected in the corners of this toom. On the wall is a small framed painting of a white house."
 );
 thisRoom.exits = {
   ...thisRoom.exits,
   northeast: { ...thisRoom.exits.northeast, to: "seven" },
   west: { ...thisRoom.exits.west, to: "five" }
 };
+thisRoom.dark = true;
 let four = thisRoom;
 
 thisRoom = new Room(

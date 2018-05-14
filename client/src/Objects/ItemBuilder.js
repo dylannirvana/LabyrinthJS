@@ -15,7 +15,6 @@ let cellPhone = new Item(
   ["cell", "phone", "noxia", "grunt", "cellphone"], // keywords
   ["playerInventory"] // starting location
 );
-cellPhone.takeable = true;
 cellPhone.invSize = 1;
 
 let brick = new Item(
@@ -24,7 +23,6 @@ let brick = new Item(
   ["brick"], // keywords
   ["two"] // starting location
 );
-brick.takeable = true;
 brick.invSize = 5;
 brick.value = 2;
 
@@ -42,7 +40,6 @@ let sword = new Item(
   ["sword", "rusty", "blade"],
   ["three"]
 );
-sword.takeable = true;
 sword.invSize = 10;
 sword.wear = "wielded";
 sword.value = 10;
@@ -54,6 +51,7 @@ let glowingWall = new Item(
   ["six", "seven"]
 )
 glowingWall.feature = true;
+glowingWall.lightSource = true;
 
 let gate = new Item(
   "gate",
@@ -79,6 +77,26 @@ let horns = new Item(
 )
 horns.feature = true;
 
+let jar = new Item(
+  "glowing cage", 
+  "Imagine a jar of fireflies. Now imagine the jar as a wire cage holding a few dozen absurdly-sized cockroaches with brilliantly glowing thoraxes. And eyes. Fortunately the bug bucket has a handle on top. Lucky you.",
+  ["jar", "insect", "insects", "bugs", "light", "bucket", "roaches", "cage", "bug"],
+  ["five"]
+)
+jar.invSize = 10;
+jar.lightSource = true;
+
+let collar = new Item(
+  "cat collar",
+  "It's a pretty bling collar for a random dungeon-cat. You're not sure what the fabric is, but the rocks mounted to it seem are glowing fiercely.",
+  ["collar", "bracelet"],
+  ["cat"]
+)
+collar.invSize = 2;
+collar.wear = "arms";
+collar.value = "1";
+collar.lightSource = true;
+
 module.exports = {
   cellPhone: cellPhone,
   brick: brick,
@@ -86,7 +104,9 @@ module.exports = {
   sword: sword,
   glowingWall: glowingWall,
   tail: tail,
-  horns: horns
+  horns: horns,
+  jar: jar,
+  collar: collar
 }
 // // In this module:
 

@@ -13,6 +13,7 @@ function Creature(
   this.attitude = attitude;
   this.doing = doing;
   this.inventory = [];
+  this.modifiers = {};
 }
 
 let cat = new Creature(
@@ -25,7 +26,7 @@ let cat = new Creature(
   50, // defense
   ["moveRandom"], // script
   "wander", // attitude
-  " wandering around.", // currently doing
+  "wandering around.", // currently doing
 );
 cat.dumb = true;
 
@@ -41,7 +42,6 @@ let minotaur = new Creature(
   "wander", // attitude
   "stomping around.", // currently doing
 );
-minotaur.blind = false;
 
 module.exports = {
   cat: cat,
