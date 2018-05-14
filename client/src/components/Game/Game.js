@@ -24,7 +24,7 @@ const Game = props => (
         <button className="gameButton smButton"><Link to="/">Quit</Link></button>
       </Col>
       <Col xs={12} md={{size: 9, order: 4}}>
-        <RoomDesc text={props.currentState.textBuffer} />
+        <RoomDesc text={props.currentState.relay} />
       </Col>
       <Col xs={12} md={{size: 9, order: 6}}>
         {props.children}
